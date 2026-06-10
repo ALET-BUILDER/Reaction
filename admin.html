@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes"/>
+<meta http-equiv="X-Frame-Options" content="DENY"/>
+<meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+<meta name="theme-color" content="#7c3aed"/>
+<title>Admin Panel — WA Reaction API</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ─── RESET & VARS (CSS dari app.html dark navy style) ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#070d1a;--bg2:#0b1121;--bg3:#0f1729;--card:#0f172a;--card2:#1e293b;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+  --p:#7c3aed;--p2:#9333ea;--p3:#a855f7;--p4:#c084fc;
+  --green:#10b981;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6;--cyan:#06b6d4;
+  --t1:#e2e8f0;--t2:#94a3b8;--t3:#334155;
+  --r:14px;--r2:10px;--r3:8px;
+  --font:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t1);font-family:var(--font);min-height:100vh;overflow-x:hidden;line-height:1.5}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--p);border-radius:3px}
+
+/* ─── BACKGROUND (app.html style) ─── */
+.bg-net{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.12) 0%,transparent 60%)}
+.bg-grid{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle at 50% 50%,#1e293b 1px,transparent 1px);
+  background-size:24px 24px;opacity:.4}
+
+/* ─── LOADING (app.html style) ─── */
+#loading-screen{position:fixed;inset:0;z-index:9999;background:#070d1a;
+  background-image:radial-gradient(circle at 50% 50%,#0f172a 1px,transparent 1px);
+  background-size:24px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .6s cubic-bezier(.4,0,.2,1)}
+#loading-screen.hidden{opacity:0;pointer-events:none}
+.loader-tech{position:relative;width:64px;height:64px;margin-bottom:2rem}
+.loader-tech::before,.loader-tech::after{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid transparent;
+  border-top-color:#7c3aed;border-bottom-color:#7c3aed;animation:spin-tech 2s linear infinite}
+.loader-tech::after{inset:12px;border:2px solid transparent;border-left-color:#a855f7;border-right-color:#a855f7;animation:spin-tech-reverse 1.5s linear infinite}
+.loader-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;
+  background:#fff;border-radius:50%;box-shadow:0 0 15px 2px rgba(124,58,237,.8);animation:pulse-tech 1.5s ease-in-out infinite}
+@keyframes spin-tech{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@keyframes spin-tech-reverse{0%{transform:rotate(0)}100%{transform:rotate(-360deg)}}
+@keyframes pulse-tech{0%,100%{opacity:1;transform:translate(-50%,-50%) scale(1)}50%{opacity:.5;transform:translate(-50%,-50%) scale(.8)}}
+.loader-title{font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,#e2e8f0,#a855f7);-webkit-background-clip:text;color:transparent;margin-bottom:6px}
+.loader-sub{font-size:.78rem;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px}
+.loader-bar{width:220px;height:3px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden}
+.loader-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#a855f7,#c084fc);transition:width .12s linear;border-radius:99px}
+.loader-status{font-size:.68rem;color:var(--t3);margin-top:10px;letter-spacing:.04em}
+
+/* ─── ADMIN LOGIN ─── */
+#admin-login{position:fixed;inset:0;z-index:5000;background:rgba(7,13,26,.96);display:flex;align-items:center;justify-content:center;padding:16px}
+#admin-login.hidden{display:none}
+.admin-login-box{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:36px 32px;width:100%;max-width:380px}
+.admin-login-logo{width:56px;height:56px;background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 18px}
+.admin-login-title{font-size:1.2rem;font-weight:800;text-align:center;margin-bottom:4px}
+.admin-login-sub{font-size:.75rem;color:var(--t3);text-align:center;margin-bottom:24px}
+.admin-login-err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:9px 12px;font-size:.75rem;color:#fca5a5;margin-bottom:14px;display:none}
+.admin-login-err.show{display:block}
+
+/* ─── APP LAYOUT ─── */
+.app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:248px;
+  background:rgba(7,13,26,.97);border-right:1px solid var(--border);
+  backdrop-filter:blur(24px);display:flex;flex-direction:column;z-index:200;
+  transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.sidebar-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.logo-mark{display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#fff;flex-shrink:0}
+.logo-text{font-size:1rem;font-weight:800;letter-spacing:-.03em;color:var(--t1)}
+.logo-ver{font-size:.58rem;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.sidebar-nav{flex:1;padding:12px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.nav-section{font-size:.57rem;color:var(--t3);font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:10px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:8px;cursor:pointer;
+  color:var(--t2);font-size:.78rem;font-weight:500;border:none;background:transparent;width:100%;
+  text-align:left;transition:all .15s;position:relative;font-family:var(--font)}
+.nav-item:hover{background:rgba(124,58,237,.1);color:var(--t1)}
+.nav-item.active{background:rgba(239,68,68,.15);color:#fca5a5}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--red);border-radius:0 3px 3px 0}
+.nav-ic{font-size:.95rem;width:18px;text-align:center;flex-shrink:0}
+.nav-badge{background:var(--red);color:#fff;font-size:.5rem;font-weight:800;padding:1px 5px;border-radius:100px;margin-left:auto}
+.sidebar-bottom{padding:12px 8px;border-top:1px solid var(--border)}
+.admin-badge{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.2);border-radius:8px;
+  padding:7px 10px;font-size:.72rem;color:#fca5a5;text-align:center;margin-bottom:8px;font-weight:600}
+.admin-logout{width:100%;padding:7px;background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:8px;color:var(--t2);font-size:.72rem;cursor:pointer;transition:all .15s;font-family:var(--font)}
+.admin-logout:hover{background:rgba(239,68,68,.1);color:#fca5a5}
+.topbar{display:none;position:fixed;top:0;left:0;right:0;height:52px;
+  background:rgba(7,13,26,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
+  z-index:150;align-items:center;padding:0 14px;gap:10px}
+.menu-btn{background:transparent;border:1px solid var(--border2);border-radius:8px;width:34px;height:34px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t1)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:190;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.main{margin-left:248px;flex:1;padding:28px;min-height:100vh}
+.panel{display:none;animation:fadeUp .2s ease}
+.panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── UI COMPONENTS ─── */
+.page-header{margin-bottom:22px}
+.page-title{font-size:1.3rem;font-weight:800;letter-spacing:-.03em}
+.page-sub{font-size:.78rem;color:var(--t3);margin-top:3px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:border-color .2s}
+.card:hover{border-color:var(--border2)}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.card-icon{width:30px;height:30px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.2);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+.card-title{font-size:.85rem;font-weight:700}
+.card-sub{font-size:.68rem;color:var(--t3);margin-top:2px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.fg{margin-bottom:12px}
+.fg:last-child{margin-bottom:0}
+.fg label{display:block;font-size:.65rem;font-weight:600;color:var(--t2);margin-bottom:5px;
+  letter-spacing:.07em;text-transform:uppercase}
+.hint{font-size:.62rem;color:var(--t3);margin-top:3px}
+input,select,textarea{width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);
+  color:var(--t1);font-family:var(--font);font-size:.8rem;border-radius:var(--r3);outline:none;
+  transition:border-color .15s,box-shadow .15s;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(124,58,237,.12)}
+input::placeholder,textarea::placeholder{color:var(--t3)}
+
+/* ─── BUTTONS ─── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;
+  border-radius:8px;font-size:.76rem;font-weight:600;border:none;cursor:pointer;
+  font-family:var(--font);transition:all .15s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.25)}
+.btn-primary:hover{background:linear-gradient(135deg,var(--p2),var(--p3));transform:translateY(-1px)}
+.btn-danger{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+.btn-danger:hover{background:rgba(239,68,68,.25)}
+.btn-green{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+.btn-green:hover{background:rgba(16,185,129,.25)}
+.btn-amber{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+.btn-amber:hover{background:rgba(245,158,11,.25)}
+.btn-secondary{background:rgba(255,255,255,.05);border:1px solid var(--border2);color:var(--t1)}
+.btn-secondary:hover{background:rgba(255,255,255,.09)}
+.btn-sm{padding:5px 10px;font-size:.68rem}
+.btn-lg{padding:10px 22px;font-size:.84rem}
+.btn-full{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+/* ─── STAT CARDS ─── */
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,.03),transparent);pointer-events:none}
+.stat-label{font-size:.64rem;color:var(--t3);font-weight:600;letter-spacing:.09em;text-transform:uppercase;margin-bottom:7px}
+.stat-val{font-size:1.7rem;font-weight:800;letter-spacing:-.04em;line-height:1}
+.stat-sub{font-size:.68rem;color:var(--t3);margin-top:4px}
+.stat-icon{position:absolute;right:14px;top:14px;font-size:1.4rem;opacity:.35}
+
+/* ─── TABLE ─── */
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:.75rem}
+.tbl th{padding:9px 12px;text-align:left;font-size:.62rem;font-weight:700;color:var(--t3);
+  letter-spacing:.09em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.tbl td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.tbl tr:last-child td{border-bottom:none}
+
+/* ─── BADGES ─── */
+.badge{font-size:.58rem;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block}
+.badge-free{background:rgba(255,255,255,.07);color:var(--t2)}
+.badge-pro{background:rgba(16,185,129,.15);color:var(--green)}
+.badge-vip{background:rgba(124,58,237,.2);color:var(--p4)}
+.badge-banned{background:rgba(239,68,68,.15);color:#fca5a5}
+.badge-on{background:rgba(16,185,129,.15);color:var(--green)}
+.badge-off{background:rgba(255,255,255,.06);color:var(--t3)}
+
+/* ─── BOT CONNECT AREA ─── */
+.qr-container{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:20px;text-align:center;min-height:200px;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.qr-container img{border-radius:8px;max-width:240px}
+.pairing-code{font-family:var(--mono);font-size:2rem;font-weight:800;letter-spacing:.2em;color:var(--p4);
+  background:var(--bg3);border:2px solid rgba(124,58,237,.3);border-radius:12px;padding:14px 24px;
+  display:inline-block;margin:10px 0}
+
+/* ─── REAL-TIME DOT ─── */
+.rt-dot{width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 8px var(--green);display:inline-block;margin-right:6px;animation:rtPulse 2s ease-in-out infinite}
+@keyframes rtPulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ─── TOAST ─── */
+#toast-container{position:fixed;top:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:7px;max-width:300px}
+.toast{padding:10px 14px;border-radius:9px;font-size:.75rem;font-weight:500;display:flex;align-items:center;gap:9px;animation:toastIn .3s ease;backdrop-filter:blur(12px)}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.toast.ok{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#6ee7b7}
+.toast.err{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+.toast.info{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:#93c5fd}
+
+/* ─── MODAL ─── */
+.modal-overlay{position:fixed;inset:0;z-index:4000;background:rgba(7,13,26,.85);display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
+.modal-overlay.hidden{display:none}
+.modal-box{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:24px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:1rem;font-weight:700;margin-bottom:16px}
+.modal-actions{display:flex;gap:10px;margin-top:18px;justify-content:flex-end}
+
+/* ─── TOGGLE ─── */
+.toggle-wrap{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.toggle-wrap:last-child{border-bottom:none}
+.toggle-label{font-size:.8rem;font-weight:500}
+.toggle-sub{font-size:.68rem;color:var(--t3);margin-top:2px}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--t3);border-radius:99px;cursor:pointer;transition:.3s}
+.toggle-slider::before{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;left:3px;top:3px;transition:.3s}
+.toggle input:checked + .toggle-slider{background:var(--green)}
+.toggle input:checked + .toggle-slider::before{transform:translateX(18px)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .topbar{display:flex}
+  .main{margin-left:0;padding:66px 14px 20px}
+  .g3{grid-template-columns:1fr 1fr}
+  .g4{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .tbl td,.tbl th{padding:7px 8px}
+}
+</style>
+</head>
+<body>
+<div class="bg-net"></div>
+<div class="bg-grid"></div>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loader-tech"><div class="loader-center"></div></div>
+  <div class="loader-title">Admin Panel</div>
+  <div class="loader-sub">WA Reaction API</div>
+  <div class="loader-bar"><div class="loader-bar-fill" id="loader-fill"></div></div>
+  <div class="loader-status" id="loader-status">Memuat...</div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div id="admin-login">
+  <div class="admin-login-box">
+    <div class="admin-login-logo">🛡️</div>
+    <div class="admin-login-title">Admin Panel</div>
+    <div class="admin-login-sub">Masukkan Admin Key untuk akses</div>
+    <div class="admin-login-err" id="admin-err"></div>
+    <div class="fg">
+      <label>Admin Key</label>
+      <input type="password" id="admin-key-input" placeholder="••••••••••••" maxlength="100"/>
+    </div>
+    <button class="btn btn-primary btn-full btn-lg" onclick="doAdminLogin()" id="admin-login-btn">
+      🔐 Masuk
+    </button>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay hidden" id="confirm-modal">
+  <div class="modal-box">
+    <div class="modal-title" id="confirm-title">Konfirmasi</div>
+    <div id="confirm-body" style="font-size:.8rem;color:var(--t2);line-height:1.6"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeConfirm()">Batal</button>
+      <button class="btn btn-danger" id="confirm-ok-btn">Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOT CONNECT MODAL -->
+<div class="modal-overlay hidden" id="bot-modal">
+  <div class="modal-box">
+    <div class="modal-title">🤖 Hubungkan Bot WhatsApp</div>
+    <div class="fg">
+      <label>Nomor Bot (dengan kode negara)</label>
+      <input type="tel" id="bm-number" placeholder="628xxxxxxxxxx" maxlength="20"/>
+    </div>
+    <div class="fg">
+      <label>Metode Koneksi</label>
+      <select id="bm-method">
+        <option value="qr">📷 QR Code</option>
+        <option value="pairing">🔢 Pairing Code</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="connectBot()" id="bm-connect-btn" style="margin-bottom:14px">
+      🔗 Hubungkan
+    </button>
+    <div class="qr-container" id="bm-qr-area">
+      <div style="color:var(--t3);font-size:.8rem">QR / Pairing Code akan muncul di sini</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeBotModal()">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast-container"></div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- APP -->
+<div class="app" id="app" style="display:none">
+  <!-- TOPBAR -->
+  <div class="topbar" id="topbar">
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    <div style="flex:1;font-size:.85rem;font-weight:700" id="topbar-title">Admin Panel</div>
+    <div style="font-size:.7rem;color:var(--t2)"><span class="rt-dot"></span>Live</div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">🛡️</div>
+        <div>
+          <div class="logo-text">Admin Panel</div>
+          <div class="logo-ver">WA Reaction API</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Dashboard</div>
+      <button class="nav-item active" data-panel="overview" onclick="navigate('overview')"><span class="nav-ic">📊</span> Overview</button>
+      <div class="nav-section">Manajemen</div>
+      <button class="nav-item" data-panel="bots" onclick="navigate('bots')"><span class="nav-ic">🤖</span> Bot Manager</button>
+      <button class="nav-item" data-panel="users" onclick="navigate('users')"><span class="nav-ic">👥</span> Pengguna <span class="nav-badge" id="nav-badge-users">0</span></button>
+      <button class="nav-item" data-panel="logs" onclick="navigate('logs')"><span class="nav-ic">📋</span> Request Log</button>
+      <div class="nav-section">Konfigurasi</div>
+      <button class="nav-item" data-panel="settings" onclick="navigate('settings')"><span class="nav-ic">⚙️</span> Pengaturan</button>
+      <button class="nav-item" data-panel="maintenance" onclick="navigate('maintenance')"><span class="nav-ic">🔧</span> Maintenance</button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="admin-badge">🛡️ Super Admin</div>
+      <button class="admin-logout" onclick="adminLogout()">🚪 Keluar Admin</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div class="panel active" id="panel-overview">
+      <div class="page-header">
+        <div class="page-title">📊 Overview</div>
+        <div class="page-sub"><span class="rt-dot"></span>Data real-time tanpa refresh</div>
+      </div>
+      <div class="g4" style="margin-bottom:18px">
+        <div class="stat-card">
+          <div class="stat-label">Total Pengguna</div>
+          <div class="stat-val" id="ov-users">0</div>
+          <div class="stat-sub" id="ov-banned-sub">0 dibanned</div>
+          <div class="stat-icon">👥</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Bot Aktif</div>
+          <div class="stat-val" id="ov-bots-active" style="color:var(--green)">0</div>
+          <div class="stat-sub" id="ov-bots-sub">dari 0 bot</div>
+          <div class="stat-icon">🤖</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Request Reaction</div>
+          <div class="stat-val" id="ov-reactions">0</div>
+          <div class="stat-sub">Total request</div>
+          <div class="stat-icon">💬</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Request</div>
+          <div class="stat-val" id="ov-total-req">0</div>
+          <div class="stat-sub">Semua fitur</div>
+          <div class="stat-icon">📊</div>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">🤖</div>
+            <div><div class="card-title">Status Bot</div><div class="card-sub">Real-time</div></div>
+          </div>
+          <div id="ov-bot-list" style="color:var(--t3);font-size:.78rem">Memuat...</div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">📋</div>
+            <div><div class="card-title">Log Terbaru</div></div>
+          </div>
+          <div id="ov-recent-logs" style="color:var(--t3);font-size:.75rem">Memuat...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOT MANAGER -->
+    <div class="panel" id="panel-bots">
+      <div class="page-header">
+        <div class="page-title">🤖 Bot Manager</div>
+        <div class="page-sub">Kelola dan hubungkan bot WhatsApp</div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="g3" style="margin-bottom:18px">
+        <div class="stat-card">
+          <div class="stat-label">Jumlah Bot</div>
+          <div class="stat-val" id="bm-total">0</div>
+          <div class="stat-sub">Terdaftar</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Yang Aktif</div>
+          <div class="stat-val" id="bm-active" style="color:var(--green)">0</div>
+          <div class="stat-sub">Terhubung</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Request Reaction</div>
+          <div class="stat-val" id="bm-reactions">0</div>
+          <div class="stat-sub">Diproses bot</div>
+        </div>
+      </div>
+
+      <!-- Connect bot -->
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-header">
+          <div class="card-icon">🔗</div>
+          <div><div class="card-title">Hubungkan Bot Baru</div><div class="card-sub">Scan QR atau masukkan Pairing Code</div></div>
+        </div>
+        <div class="g2">
+          <div class="fg" style="margin:0">
+            <label>Nomor Bot</label>
+            <input type="tel" id="bot-number-input" placeholder="628xxxxxxxxxx" maxlength="20"/>
+            <div class="hint">Format: 62 + nomor tanpa 0 di depan</div>
+          </div>
+          <div class="fg" style="margin:0">
+            <label>Metode</label>
+            <select id="bot-method-select">
+              <option value="qr">📷 QR Code</option>
+              <option value="pairing">🔢 Pairing Code</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:10px">
+          <button class="btn btn-primary" onclick="openBotModal()">🔗 Hubungkan Bot</button>
+        </div>
+      </div>
+
+      <!-- Bot list -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">📋</div>
+          <div><div class="card-title">History Bot</div><div class="card-sub">Kelola nomor bot yang terdaftar</div></div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Nomor Bot</th>
+                <th>Status</th>
+                <th>Aktif</th>
+                <th>Terdaftar</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="bot-table-body">
+              <tr><td colspan="5" style="text-align:center;color:var(--t3);padding:20px">Memuat data bot...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="panel" id="panel-users">
+      <div class="page-header">
+        <div class="page-title">👥 Pengguna</div>
+        <div class="page-sub">Kelola status dan limit pengguna</div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header">
+          <div class="card-icon">🔍</div>
+          <div><div class="card-title">Cari & Filter Pengguna</div></div>
+        </div>
+        <div class="g2">
+          <input type="text" id="user-search" placeholder="Cari nomor WA..." oninput="filterUsers()"/>
+          <select id="user-filter" onchange="filterUsers()">
+            <option value="">Semua Status</option>
+            <option value="free">Free</option>
+            <option value="pro">Pro</option>
+            <option value="vip">VIP</option>
+            <option value="banned">Banned</option>
+          </select>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Nomor WA</th>
+                <th>Status</th>
+                <th>Limit Pakai</th>
+                <th>Terdaftar</th>
+                <th>Login Terakhir</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="user-table-body">
+              <tr><td colspan="6" style="text-align:center;color:var(--t3);padding:20px">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- REQUEST LOG -->
+    <div class="panel" id="panel-logs">
+      <div class="page-header">
+        <div class="page-title">📋 Request Log</div>
+        <div class="page-sub">Riwayat semua request API</div>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Waktu</th>
+                <th>Tipe</th>
+                <th>Nomor</th>
+                <th>Channel/URL</th>
+                <th>Bot</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="log-table-body">
+              <tr><td colspan="6" style="text-align:center;color:var(--t3);padding:20px">Memuat log...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="panel" id="panel-settings">
+      <div class="page-header">
+        <div class="page-title">⚙️ Pengaturan</div>
+        <div class="page-sub">Atur limit, emoji, dan konfigurasi sistem</div>
+      </div>
+
+      <div class="g2" style="margin-bottom:16px">
+        <!-- Free -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">📦</div>
+            <div><div class="card-title">Paket Free</div></div>
+          </div>
+          <div class="fg">
+            <label>Limit Request/hari</label>
+            <input type="number" id="cfg-free-limit" placeholder="5" min="1" max="999"/>
+          </div>
+          <div class="fg">
+            <label>Max Emoji per Request</label>
+            <input type="number" id="cfg-free-emoji" placeholder="3" min="1" max="300"/>
+          </div>
+          <div class="fg">
+            <label>Max Reaction Total</label>
+            <input type="number" id="cfg-free-react-max" placeholder="15" min="1" max="999"/>
+          </div>
+        </div>
+        <!-- Pro -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">🌟</div>
+            <div><div class="card-title">Paket Pro</div></div>
+          </div>
+          <div class="fg">
+            <label>Limit Request/hari</label>
+            <input type="number" id="cfg-pro-limit" placeholder="80" min="1" max="9999"/>
+          </div>
+          <div class="fg">
+            <label>Max Emoji per Request</label>
+            <input type="number" id="cfg-pro-emoji" placeholder="5" min="1" max="300"/>
+          </div>
+          <div class="fg">
+            <label>Max Reaction Total</label>
+            <input type="number" id="cfg-pro-react-max" placeholder="100" min="1" max="999"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="g2" style="margin-bottom:16px">
+        <!-- VIP -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">👑</div>
+            <div><div class="card-title">Paket VIP</div></div>
+          </div>
+          <div class="fg">
+            <label>Limit Request/hari</label>
+            <input type="number" id="cfg-vip-limit" placeholder="999999" min="1"/>
+          </div>
+          <div class="fg">
+            <label>Max Emoji per Request</label>
+            <input type="number" id="cfg-vip-emoji" placeholder="300" min="1" max="500"/>
+          </div>
+          <div class="fg">
+            <label>Max Reaction Total</label>
+            <input type="number" id="cfg-vip-react-max" placeholder="300" min="1" max="999"/>
+          </div>
+        </div>
+        <!-- Global -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">🌐</div>
+            <div><div class="card-title">Pengaturan Global</div></div>
+          </div>
+          <div class="fg">
+            <label>Delay Antar Kirim (detik)</label>
+            <input type="number" id="cfg-delay" placeholder="180" min="0" max="3600"/>
+            <div class="hint">Jeda setelah setiap request</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-lg" onclick="saveAllSettings()">💾 Simpan Semua Pengaturan</button>
+    </div>
+
+    <!-- MAINTENANCE -->
+    <div class="panel" id="panel-maintenance">
+      <div class="page-header">
+        <div class="page-title">🔧 Maintenance</div>
+        <div class="page-sub">Kontrol mode maintenance server</div>
+      </div>
+      <div class="card" style="max-width:500px">
+        <div class="card-header">
+          <div class="card-icon">🔧</div>
+          <div><div class="card-title">Mode Maintenance</div><div class="card-sub">Saat aktif, semua user tidak bisa akses API</div></div>
+        </div>
+        <div class="toggle-wrap">
+          <div>
+            <div class="toggle-label">Aktifkan Maintenance</div>
+            <div class="toggle-sub">User akan melihat halaman maintenance</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="maintenance-toggle" onchange="toggleMaintenance()"/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="fg" style="margin-top:14px">
+          <label>Pesan Maintenance</label>
+          <textarea id="maintenance-msg" rows="3" placeholder="Server sedang dalam perbaikan. Mohon tunggu."></textarea>
+        </div>
+        <button class="btn btn-amber" onclick="saveMaintMsg()">💾 Simpan Pesan</button>
+        <div style="margin-top:14px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.15);border-radius:8px;padding:12px;font-size:.75rem;color:#fcd34d">
+          ⚠️ Peringatan: Mode maintenance hanya bisa dimatikan oleh admin. Tidak bisa di-bypass dengan refresh halaman.
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="api.js"></script>
+<script>
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+var ADMIN_KEY_STORE = 'wa_admin_key';
+var adminKey = null;
+var socket = null;
+var allUsers = [];
+var allBots = [];
+var _confirmCallback = null;
+
+// ─────────────────────────────────────────────
+// BOOT
+// ─────────────────────────────────────────────
+async function bootAdmin() {
+  setLoader(20, 'Menginisialisasi...');
+  await sleep(300);
+  setLoader(60, 'Memeriksa sesi admin...');
+  await sleep(400);
+
+  var saved = sessionStorage.getItem(ADMIN_KEY_STORE);
+  if (saved) {
+    var r = await API.admin.getStats(saved);
+    if (r.data?.success) {
+      adminKey = saved;
+      setLoader(100, 'Siap!');
+      await sleep(300);
+      hideLoader();
+      document.getElementById('admin-login').classList.add('hidden');
+      showAdminApp(r.data.data);
+      return;
+    } else {
+      sessionStorage.removeItem(ADMIN_KEY_STORE);
+    }
+  }
+
+  setLoader(100, 'Siap!');
+  await sleep(300);
+  hideLoader();
+  document.getElementById('admin-key-input').addEventListener('keydown', e => { if(e.key==='Enter') doAdminLogin(); });
+}
+
+function setLoader(pct, msg) {
+  document.getElementById('loader-fill').style.width = pct + '%';
+  document.getElementById('loader-status').textContent = msg;
+}
+
+function hideLoader() {
+  document.getElementById('loading-screen').classList.add('hidden');
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ─────────────────────────────────────────────
+// ADMIN LOGIN
+// ─────────────────────────────────────────────
+async function doAdminLogin() {
+  var key = document.getElementById('admin-key-input').value.trim();
+  if (!key) { showAdminErr('Admin Key wajib diisi.'); return; }
+
+  var btn = document.getElementById('admin-login-btn');
+  btn.disabled = true; btn.textContent = 'Memverifikasi...';
+
+  var r = await API.admin.login(key);
+  if (r.data?.success) {
+    adminKey = key;
+    sessionStorage.setItem(ADMIN_KEY_STORE, key);
+    document.getElementById('admin-login').classList.add('hidden');
+    var stats = await API.admin.getStats(key);
+    showAdminApp(stats.data?.data);
+  } else {
+    showAdminErr(r.data?.error || 'Admin Key salah.');
+    btn.disabled = false; btn.textContent = '🔐 Masuk';
+  }
+}
+
+function showAdminErr(msg) {
+  var el = document.getElementById('admin-err');
+  el.textContent = msg; el.classList.add('show');
+  document.getElementById('admin-login-btn').disabled = false;
+  document.getElementById('admin-login-btn').textContent = '🔐 Masuk';
+}
+
+function adminLogout() {
+  sessionStorage.removeItem(ADMIN_KEY_STORE);
+  adminKey = null;
+  if (socket) { try { socket.disconnect(); } catch(e){} }
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('admin-login').classList.remove('hidden');
+  document.getElementById('admin-err').classList.remove('show');
+  document.getElementById('admin-key-input').value = '';
+}
+
+// ─────────────────────────────────────────────
+// APP
+// ─────────────────────────────────────────────
+function showAdminApp(statsData) {
+  document.getElementById('app').style.display = 'flex';
+  if (statsData) renderStats(statsData);
+  navigate('overview');
+  connectSocket();
+  loadAllData();
+}
+
+function renderStats(d) {
+  if (!d) return;
+  if (d.users) {
+    document.getElementById('ov-users').textContent = d.users.total;
+    document.getElementById('ov-banned-sub').textContent = d.users.banned + ' dibanned';
+    document.getElementById('nav-badge-users').textContent = d.users.total;
+  }
+  if (d.bots) {
+    document.getElementById('ov-bots-active').textContent = d.bots.active;
+    document.getElementById('ov-bots-sub').textContent = 'dari ' + d.bots.total + ' bot';
+    document.getElementById('bm-total').textContent = d.bots.total;
+    document.getElementById('bm-active').textContent = d.bots.active;
+  }
+  if (d.requests) {
+    document.getElementById('ov-reactions').textContent = d.requests.reaction;
+    document.getElementById('ov-total-req').textContent = d.requests.total;
+    document.getElementById('bm-reactions').textContent = d.requests.reaction;
+  }
+  if (d.settings) renderSettingsForm(d.settings);
+  if (d.recent_logs) renderLogs(d.recent_logs);
+}
+
+function renderSettingsForm(s) {
+  var map = {
+    'cfg-free-limit': s.free_limit,
+    'cfg-free-emoji': s.free_emoji_limit,
+    'cfg-free-react-max': s.reaction_free_max,
+    'cfg-pro-limit': s.pro_limit,
+    'cfg-pro-emoji': s.pro_emoji_limit,
+    'cfg-pro-react-max': s.reaction_pro_max,
+    'cfg-vip-limit': s.vip_limit,
+    'cfg-vip-emoji': s.vip_emoji_limit,
+    'cfg-vip-react-max': s.reaction_vip_max,
+    'cfg-delay': s.delay_seconds
+  };
+  Object.entries(map).forEach(([id, val]) => {
+    var el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+  var maintToggle = document.getElementById('maintenance-toggle');
+  if (maintToggle) maintToggle.checked = !!s.maintenance;
+  var maintMsg = document.getElementById('maintenance-msg');
+  if (maintMsg) maintMsg.value = s.maintenance_msg || '';
+}
+
+// ─────────────────────────────────────────────
+// LOAD DATA
+// ─────────────────────────────────────────────
+async function loadAllData() {
+  loadUsers();
+  loadBots();
+}
+
+async function loadUsers() {
+  var r = await API.admin.getUsers(adminKey);
+  if (r.data?.success) {
+    allUsers = r.data.users || [];
+    renderUsers(allUsers);
+    document.getElementById('nav-badge-users').textContent = allUsers.length;
+  }
+}
+
+async function loadBots() {
+  var r = await API.admin.getBots(adminKey);
+  if (r.data?.success) {
+    allBots = r.data.bots || [];
+    renderBotTable(allBots);
+    renderOvBotList(allBots);
+  }
+}
+
+async function loadStats() {
+  var r = await API.admin.getStats(adminKey);
+  if (r.data?.success) renderStats(r.data.data);
+}
+
+// ─────────────────────────────────────────────
+// RENDER USERS
+// ─────────────────────────────────────────────
+function renderUsers(users) {
+  var tbody = document.getElementById('user-table-body');
+  if (!users.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:20px">Belum ada pengguna.</td></tr>';
+    return;
+  }
+  var html = '';
+  users.forEach(u => {
+    var badgeClass = u.banned ? 'badge-banned' : ('badge-' + u.status);
+    var statusLabel = u.banned ? 'BANNED' : u.status.toUpperCase();
+    html += '<tr>';
+    html += '<td style="font-family:var(--mono);font-size:.72rem">' + escHtml(u.phone) + '</td>';
+    html += '<td><span class="badge ' + badgeClass + '">' + statusLabel + '</span></td>';
+    html += '<td>' + u.limit_used + '</td>';
+    html += '<td style="font-size:.7rem;color:var(--t3)">' + fmtDate(u.created_at) + '</td>';
+    html += '<td style="font-size:.7rem;color:var(--t3)">' + fmtDate(u.last_login) + '</td>';
+    html += '<td>';
+    html += '<div style="display:flex;gap:5px;flex-wrap:wrap">';
+    // Status buttons
+    if (u.status !== 'free') html += '<button class="btn btn-sm btn-secondary" onclick="setUserStatus(\''+escHtml(u.phone)+'\',\'free\')">Free</button>';
+    if (u.status !== 'pro') html += '<button class="btn btn-sm btn-green" onclick="setUserStatus(\''+escHtml(u.phone)+'\',\'pro\')">Pro</button>';
+    if (u.status !== 'vip') html += '<button class="btn btn-sm" style="background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.25);color:var(--p4)" onclick="setUserStatus(\''+escHtml(u.phone)+'\',\'vip\')">VIP</button>';
+    if (!u.banned) html += '<button class="btn btn-sm btn-danger" onclick="banUser(\''+escHtml(u.phone)+'\',true)">Ban</button>';
+    else html += '<button class="btn btn-sm btn-green" onclick="banUser(\''+escHtml(u.phone)+'\',false)">Unban</button>';
+    html += '<button class="btn btn-sm btn-amber" onclick="resetLimit(\''+escHtml(u.phone)+'\')">Reset Limit</button>';
+    html += '</div></td>';
+    html += '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function filterUsers() {
+  var q = document.getElementById('user-search').value.toLowerCase();
+  var f = document.getElementById('user-filter').value;
+  var filtered = allUsers.filter(u => {
+    var matchQ = !q || u.phone.includes(q);
+    var matchF = !f || (f === 'banned' ? u.banned : u.status === f && !u.banned);
+    return matchQ && matchF;
+  });
+  renderUsers(filtered);
+}
+
+// ─────────────────────────────────────────────
+// USER ACTIONS
+// ─────────────────────────────────────────────
+async function setUserStatus(phone, status) {
+  confirm2('Ubah Status', 'Ubah status user ' + phone + ' ke ' + status.toUpperCase() + '?', async () => {
+    var r = await API.admin.setUserStatus(adminKey, phone, status);
+    if (r.data?.success) { toast('✅ Status berhasil diubah.', 'ok'); loadUsers(); loadStats(); }
+    else toast(r.data?.error || 'Gagal.', 'err');
+  });
+}
+
+async function banUser(phone, ban) {
+  confirm2('Konfirmasi', (ban ? 'Ban' : 'Unban') + ' user ' + phone + '?', async () => {
+    var r = await API.admin.banUser(adminKey, phone, ban);
+    if (r.data?.success) { toast('✅ ' + (ban ? 'User dibanned.' : 'User di-unban.'), 'ok'); loadUsers(); }
+    else toast(r.data?.error || 'Gagal.', 'err');
+  });
+}
+
+async function resetLimit(phone) {
+  confirm2('Reset Limit', 'Reset limit user ' + phone + ' ke 0?', async () => {
+    var r = await API.admin.setLimit(adminKey, phone, 0);
+    if (r.data?.success) { toast('✅ Limit direset.', 'ok'); loadUsers(); }
+    else toast(r.data?.error || 'Gagal.', 'err');
+  });
+}
+
+// ─────────────────────────────────────────────
+// BOT MANAGER
+// ─────────────────────────────────────────────
+function renderBotTable(bots) {
+  var tbody = document.getElementById('bot-table-body');
+  if (!bots.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--t3);padding:20px">Belum ada bot terdaftar.</td></tr>';
+    return;
+  }
+  var html = '';
+  bots.forEach(b => {
+    var isOn = b.connected && b.active;
+    html += '<tr>';
+    html += '<td style="font-family:var(--mono);font-size:.75rem">' + escHtml(b.number) + '</td>';
+    html += '<td><span class="badge ' + (b.connected ? 'badge-on' : 'badge-off') + '">' + (b.connected ? '🟢 Online' : '🔴 Offline') + '</span></td>';
+    html += '<td><span class="badge ' + (b.active ? 'badge-on' : 'badge-off') + '">' + (b.active ? 'Aktif' : 'Nonaktif') + '</span></td>';
+    html += '<td style="font-size:.7rem;color:var(--t3)">' + fmtDate(b.added_at) + '</td>';
+    html += '<td><div style="display:flex;gap:5px">';
+    html += '<button class="btn btn-sm ' + (b.active ? 'btn-amber' : 'btn-green') + '" onclick="toggleBotActive(\''+escHtml(b.number)+'\','+(b.active?'false':'true')+')">' + (b.active ? 'Nonaktifkan' : 'Aktifkan') + '</button>';
+    html += '<button class="btn btn-sm btn-danger" onclick="deleteBot(\''+escHtml(b.number)+'\')">🗑️ Hapus</button>';
+    html += '</div></td>';
+    html += '</tr>';
+  });
+  tbody.innerHTML = html;
+
+  document.getElementById('bm-total').textContent = bots.length;
+  document.getElementById('bm-active').textContent = bots.filter(b => b.connected && b.active).length;
+}
+
+function renderOvBotList(bots) {
+  var el = document.getElementById('ov-bot-list');
+  if (!bots.length) {
+    el.innerHTML = '<div style="color:var(--t3)">Belum ada bot.</div>';
+    return;
+  }
+  var html = '';
+  bots.forEach(b => {
+    var isOn = b.connected && b.active;
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)">';
+    html += '<div style="display:flex;align-items:center;gap:8px">';
+    html += '<div style="width:7px;height:7px;border-radius:50%;background:' + (isOn ? 'var(--green);box-shadow:0 0 6px var(--green)' : 'var(--t3)') + '"></div>';
+    html += '<span style="font-size:.76rem;font-family:var(--mono)">' + escHtml(b.number) + '</span>';
+    html += '</div>';
+    html += '<span style="font-size:.68rem;color:var(--t3)">' + (isOn ? 'Aktif' : 'Offline') + '</span>';
+    html += '</div>';
+  });
+  el.innerHTML = html || '<div style="color:var(--t3)">Belum ada bot.</div>';
+}
+
+function renderLogs(logs) {
+  var el = document.getElementById('ov-recent-logs');
+  var tbl = document.getElementById('log-table-body');
+  if (!logs || !logs.length) {
+    var emptyMsg = '<div style="color:var(--t3)">Belum ada log.</div>';
+    el.innerHTML = emptyMsg;
+    if (tbl) tbl.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:20px">Belum ada log.</td></tr>';
+    return;
+  }
+  // Overview: compact
+  var html = '';
+  logs.slice(0, 8).forEach(l => {
+    html += '<div style="padding:5px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">';
+    html += '<div><span style="font-size:.68rem;color:var(--t3)">' + fmtDateTime(l.time) + '</span> ';
+    html += '<span style="font-size:.72rem;color:var(--t2)">' + escHtml(l.owner_phone||'-') + '</span></div>';
+    html += '<span class="badge ' + (l.status === 'success' ? 'badge-on' : 'badge-banned') + '">' + (l.type||'?') + '</span>';
+    html += '</div>';
+  });
+  el.innerHTML = html;
+
+  // Full log table
+  if (tbl) {
+    var thtml = '';
+    logs.forEach(l => {
+      thtml += '<tr>';
+      thtml += '<td style="font-size:.68rem;color:var(--t3);white-space:nowrap">' + fmtDateTime(l.time) + '</td>';
+      thtml += '<td><span class="badge badge-free">' + escHtml(l.type||'-') + '</span></td>';
+      thtml += '<td style="font-family:var(--mono);font-size:.7rem">' + escHtml(l.owner_phone||'-') + '</td>';
+      thtml += '<td style="font-size:.7rem;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml((l.channel||l.url||'-').slice(0,40)) + '</td>';
+      thtml += '<td style="font-size:.7rem">' + escHtml(l.bot||'-') + '</td>';
+      thtml += '<td><span class="badge ' + (l.status === 'success' ? 'badge-on' : 'badge-banned') + '">' + escHtml(l.status||'-') + '</span></td>';
+      thtml += '</tr>';
+    });
+    tbl.innerHTML = thtml;
+  }
+}
+
+// ─────────────────────────────────────────────
+// BOT CONNECT
+// ─────────────────────────────────────────────
+function openBotModal() {
+  var number = document.getElementById('bot-number-input').value.trim();
+  var method = document.getElementById('bot-method-select').value;
+  if (number) {
+    document.getElementById('bm-number').value = number;
+    document.getElementById('bm-method').value = method;
+  }
+  document.getElementById('bot-modal').classList.remove('hidden');
+  document.getElementById('bm-qr-area').innerHTML = '<div style="color:var(--t3);font-size:.78rem">QR / Pairing Code akan muncul di sini setelah klik Hubungkan.</div>';
+}
+
+function closeBotModal() {
+  document.getElementById('bot-modal').classList.add('hidden');
+}
+
+async function connectBot() {
+  var number = document.getElementById('bm-number').value.replace(/\D/g,'');
+  var method = document.getElementById('bm-method').value;
+  if (!number || number.length < 8) { toast('Nomor tidak valid.', 'err'); return; }
+
+  var btn = document.getElementById('bm-connect-btn');
+  btn.disabled = true; btn.textContent = '⏳ Menghubungkan...';
+
+  var qrArea = document.getElementById('bm-qr-area');
+  qrArea.innerHTML = '<div style="color:var(--t2);font-size:.78rem">⏳ Memproses koneksi...</div>';
+
+  var r = await API.admin.connectBot(adminKey, number, method);
+  btn.disabled = false; btn.textContent = '🔗 Hubungkan';
+
+  if (r.data?.success) {
+    if (r.data.status === 'qr' && r.data.qr) {
+      qrArea.innerHTML = '<div style="margin-bottom:10px;font-size:.78rem;color:var(--t2)">Scan QR Code dengan WhatsApp:</div><img src="' + escHtml(r.data.qr) + '" alt="QR" style="max-width:240px;border-radius:8px;border:3px solid rgba(124,58,237,.3)"/><div style="font-size:.72rem;color:var(--t3);margin-top:8px">QR kadaluarsa dalam 30 detik. Jika expired, klik Hubungkan lagi.</div>';
+    } else if (r.data.status === 'pairing' && r.data.code) {
+      qrArea.innerHTML = '<div style="margin-bottom:10px;font-size:.78rem;color:var(--t2)">Masukkan Pairing Code ini di WhatsApp:</div><div class="pairing-code">' + escHtml(r.data.code) + '</div><div style="font-size:.72rem;color:var(--t3);margin-top:8px">Buka WhatsApp → Linked Devices → Link a Device → Link with phone number</div>';
+    } else if (r.data.status === 'connected') {
+      qrArea.innerHTML = '<div style="color:var(--green);font-size:.9rem;font-weight:700">✅ Bot berhasil terhubung!</div>';
+      toast('✅ Bot ' + number + ' berhasil terhubung!', 'ok');
+      loadBots(); loadStats();
+    }
+  } else {
+    qrArea.innerHTML = '<div style="color:var(--red);font-size:.78rem">❌ ' + escHtml(r.data?.error || 'Gagal menghubungkan bot.') + '</div>';
+    toast(r.data?.error || 'Gagal.', 'err');
+  }
+}
+
+async function deleteBot(number) {
+  confirm2('Hapus Bot', 'Hapus bot ' + number + '? Bot akan terputus dan session dihapus.', async () => {
+    var r = await API.admin.deleteBot(adminKey, number);
+    if (r.data?.success) { toast('✅ Bot dihapus.', 'ok'); loadBots(); loadStats(); }
+    else toast(r.data?.error || 'Gagal.', 'err');
+  });
+}
+
+async function toggleBotActive(number, active) {
+  var r = await API.admin.toggleBot(adminKey, number, active);
+  if (r.data?.success) { toast('✅ Status bot diubah.', 'ok'); loadBots(); }
+  else toast(r.data?.error || 'Gagal.', 'err');
+}
+
+// ─────────────────────────────────────────────
+// SETTINGS
+// ─────────────────────────────────────────────
+async function saveAllSettings() {
+  var settings = {
+    free_limit: parseInt(document.getElementById('cfg-free-limit').value) || 5,
+    free_emoji_limit: parseInt(document.getElementById('cfg-free-emoji').value) || 3,
+    reaction_free_max: parseInt(document.getElementById('cfg-free-react-max').value) || 15,
+    pro_limit: parseInt(document.getElementById('cfg-pro-limit').value) || 80,
+    pro_emoji_limit: parseInt(document.getElementById('cfg-pro-emoji').value) || 5,
+    reaction_pro_max: parseInt(document.getElementById('cfg-pro-react-max').value) || 100,
+    vip_limit: parseInt(document.getElementById('cfg-vip-limit').value) || 999999,
+    vip_emoji_limit: parseInt(document.getElementById('cfg-vip-emoji').value) || 300,
+    reaction_vip_max: parseInt(document.getElementById('cfg-vip-react-max').value) || 300,
+    delay_seconds: parseInt(document.getElementById('cfg-delay').value) || 180
+  };
+
+  var success = true;
+  for (var [k, v] of Object.entries(settings)) {
+    var r = await API.admin.saveSetting(adminKey, k, v);
+    if (!r.data?.success) { success = false; }
+  }
+
+  if (success) toast('✅ Semua pengaturan disimpan!', 'ok');
+  else toast('⚠️ Beberapa pengaturan gagal disimpan.', 'err');
+}
+
+async function toggleMaintenance() {
+  var enabled = document.getElementById('maintenance-toggle').checked;
+  var r = await API.admin.saveSetting(adminKey, 'maintenance', enabled);
+  if (r.data?.success) {
+    toast(enabled ? '🔧 Maintenance diaktifkan.' : '✅ Maintenance dimatikan.', enabled ? 'info' : 'ok');
+  } else {
+    document.getElementById('maintenance-toggle').checked = !enabled;
+    toast('Gagal mengubah maintenance.', 'err');
+  }
+}
+
+async function saveMaintMsg() {
+  var msg = document.getElementById('maintenance-msg').value.trim();
+  var r = await API.admin.saveSetting(adminKey, 'maintenance_msg', msg || 'Server sedang dalam perbaikan.');
+  if (r.data?.success) toast('✅ Pesan maintenance disimpan!', 'ok');
+  else toast('Gagal.', 'err');
+}
+
+// ─────────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────────
+function navigate(panel) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  var target = document.getElementById('panel-' + panel);
+  if (target) target.classList.add('active');
+  var nav = document.querySelector('[data-panel="' + panel + '"]');
+  if (nav) nav.classList.add('active');
+  var titles = { overview:'Overview', bots:'Bot Manager', users:'Pengguna', logs:'Request Log', settings:'Pengaturan', maintenance:'Maintenance' };
+  document.getElementById('topbar-title').textContent = 'Admin — ' + (titles[panel] || panel);
+  closeSidebar();
+  if (panel === 'users') loadUsers();
+  if (panel === 'bots') loadBots();
+  if (panel === 'logs') { loadStats(); }
+  if (panel === 'overview') { loadStats(); }
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// ─────────────────────────────────────────────
+// SOCKET
+// ─────────────────────────────────────────────
+function connectSocket() {
+  try {
+    var s = document.createElement('script');
+    s.src = '/socket.io/socket.io.js';
+    s.onload = initSocket;
+    s.onerror = () => {};
+    document.head.appendChild(s);
+  } catch(e) {}
+}
+
+function initSocket() {
+  try {
+    socket = io();
+    socket.emit('admin:join', adminKey);
+
+    socket.on('stats:update', d => {
+      renderStats(d);
+    });
+    socket.on('bot:list', bots => {
+      allBots = bots || [];
+      renderBotTable(allBots);
+      renderOvBotList(allBots);
+    });
+    socket.on('bot:connected', d => {
+      toast('🤖 Bot ' + d.number + ' terhubung!', 'ok');
+      loadBots(); loadStats();
+    });
+    socket.on('bot:disconnected', d => {
+      toast('⚠️ Bot ' + d.number + ' terputus.', 'info');
+      loadBots(); loadStats();
+    });
+    socket.on('bot:status', () => { loadBots(); });
+    socket.on('bot:qr', d => {
+      var qrArea = document.getElementById('bm-qr-area');
+      if (qrArea && !document.getElementById('bot-modal').classList.contains('hidden')) {
+        qrArea.innerHTML = '<div style="margin-bottom:8px;font-size:.75rem;color:var(--t2)">QR diperbarui:</div><img src="' + escHtml(d.qr) + '" style="max-width:220px;border-radius:8px"/>';
+      }
+    });
+    socket.on('bot:pairing_code', d => {
+      var qrArea = document.getElementById('bm-qr-area');
+      if (qrArea && !document.getElementById('bot-modal').classList.contains('hidden')) {
+        qrArea.innerHTML = '<div class="pairing-code">' + escHtml(d.code) + '</div>';
+      }
+    });
+    socket.on('settings:updated', s => {
+      renderSettingsForm(s);
+    });
+
+    // Refresh data every 15s
+    setInterval(() => { loadStats(); loadBots(); }, 15000);
+  } catch(e) {}
+}
+
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function confirm2(title, body, cb) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-body').textContent = body;
+  _confirmCallback = cb;
+  document.getElementById('confirm-modal').classList.remove('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('confirm-ok-btn').onclick = () => {
+    closeConfirm();
+    if (_confirmCallback) _confirmCallback();
+  };
+});
+
+function closeConfirm() {
+  document.getElementById('confirm-modal').classList.add('hidden');
+  _confirmCallback = null;
+}
+
+function toast(msg, type) {
+  var c = document.getElementById('toast-container');
+  var t = document.createElement('div');
+  t.className = 'toast ' + (type || 'info');
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 400); }, 3500);
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+}
+
+function fmtDate(ts) {
+  if (!ts) return '-';
+  return new Date(ts).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+function fmtDateTime(ts) {
+  if (!ts) return '-';
+  return new Date(ts).toLocaleString('id-ID', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+}
+
+// ─────────────────────────────────────────────
+// BOOT
+// ─────────────────────────────────────────────
+window.addEventListener('load', bootAdmin);
+</script>
+</body>
+</html>

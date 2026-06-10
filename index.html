@@ -7,7 +7,6 @@
 <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
 <meta name="theme-color" content="#7c3aed"/>
 <title>WA Reaction API — Dashboard</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%237c3aed'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter,Arial,sans-serif' font-weight='800' font-size='12' fill='white'%3EWA%3C/text%3E%3C/svg%3E"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -24,257 +23,263 @@
 }
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--t1);font-family:var(--font);min-height:100vh;overflow-x:hidden;line-height:1.5}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--bg2)}
-::-webkit-scrollbar-thumb{background:var(--p);border-radius:3px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--p);border-radius:3px}
 
-/* ─── BG ─── */
 .bg-mesh{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .bg-mesh::before{content:'';position:absolute;width:800px;height:800px;top:-200px;left:50%;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(124,58,237,.15) 0%,transparent 70%)}
 .bg-mesh::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(124,58,237,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.025) 1px,transparent 1px);background-size:40px 40px}
 
-/* ─── LOADING SCREEN (style dari app.html) ─── */
-#loading-screen{position:fixed;inset:0;z-index:9999;background:#0f172a;background-image:radial-gradient(circle at 50% 50%,#1e293b 1px,transparent 1px);background-size:24px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s cubic-bezier(.4,0,.2,1)}
+/* LOADING */
+#loading-screen{position:fixed;inset:0;z-index:9999;background:#07070e;background-image:radial-gradient(circle at 50% 50%,#0d0d1a 1px,transparent 1px);background-size:24px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s cubic-bezier(.4,0,.2,1)}
 #loading-screen.hidden{opacity:0;pointer-events:none}
 .loader-tech{position:relative;width:64px;height:64px;margin-bottom:2rem}
-.loader-tech::before,.loader-tech::after{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:#7c3aed;border-bottom-color:#7c3aed;animation:spin-tech 2s linear infinite}
-.loader-tech::after{inset:12px;border:2px solid transparent;border-left-color:#a855f7;border-right-color:#a855f7;animation:spin-tech-reverse 1.5s linear infinite}
-.loader-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;background:#fff;border-radius:50%;box-shadow:0 0 15px 2px rgba(124,58,237,.8);animation:pulse-tech 1.5s ease-in-out infinite}
-@keyframes spin-tech{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-@keyframes spin-tech-reverse{0%{transform:rotate(0)}100%{transform:rotate(-360deg)}}
-@keyframes pulse-tech{0%,100%{opacity:1;transform:translate(-50%,-50%) scale(1)}50%{opacity:.5;transform:translate(-50%,-50%) scale(.8)}}
-.loader-title{font-size:1.5rem;font-weight:800;letter-spacing:-.03em;background:linear-gradient(135deg,#e2e0ff,#a855f7);-webkit-background-clip:text;color:transparent;margin-bottom:8px}
-.loader-sub{font-size:.8rem;color:#4a4870;letter-spacing:.1em;text-transform:uppercase;margin-bottom:24px}
+.loader-tech::before,.loader-tech::after{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:#7c3aed;border-bottom-color:#7c3aed;animation:spinA 2s linear infinite}
+.loader-tech::after{inset:12px;border-left-color:#a855f7;border-right-color:#a855f7;border-top-color:transparent;border-bottom-color:transparent;animation:spinB 1.5s linear infinite}
+.loader-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;background:#fff;border-radius:50%;box-shadow:0 0 15px 2px rgba(124,58,237,.8);animation:pulseC 1.5s ease-in-out infinite}
+@keyframes spinA{to{transform:rotate(360deg)}}
+@keyframes spinB{to{transform:rotate(-360deg)}}
+@keyframes pulseC{0%,100%{opacity:1;transform:translate(-50%,-50%) scale(1)}50%{opacity:.4;transform:translate(-50%,-50%) scale(.7)}}
+.loader-title{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#e2e0ff,#a855f7);-webkit-background-clip:text;color:transparent;margin-bottom:6px}
+.loader-sub{font-size:.75rem;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px}
 .loader-bar{width:220px;height:3px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden}
 .loader-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#a855f7,#c084fc);transition:width .12s linear;border-radius:99px}
-.loader-status{font-size:.7rem;color:#4a4870;margin-top:12px;letter-spacing:.05em}
+.loader-status{font-size:.68rem;color:var(--t3);margin-top:10px}
 
-/* ─── MAINTENANCE ─── */
-#maintenance-screen{position:fixed;inset:0;z-index:9998;background:#07070e;display:flex;align-items:center;justify-content:center;text-align:center}
+/* MAINTENANCE */
+#maintenance-screen{position:fixed;inset:0;z-index:9998;background:var(--bg);display:flex;align-items:center;justify-content:center;text-align:center;flex-direction:column;gap:12px}
 #maintenance-screen.hidden{display:none}
-.maint-icon{font-size:3.5rem;margin-bottom:16px}
-.maint-title{font-size:1.4rem;font-weight:800;color:var(--t1);margin-bottom:8px}
-.maint-msg{font-size:.85rem;color:var(--t2)}
 
-/* ─── LOGIN MODAL ─── */
-#login-modal{position:fixed;inset:0;z-index:5000;background:rgba(7,7,14,.95);display:flex;align-items:center;justify-content:center;padding:16px}
-#login-modal.hidden{display:none}
-.login-box{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:36px 32px;width:100%;max-width:400px;position:relative}
-.login-logo{width:56px;height:56px;background:linear-gradient(135deg,var(--p),#6366f1);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.4rem}
-.login-title{font-size:1.3rem;font-weight:800;text-align:center;margin-bottom:4px}
-.login-sub{font-size:.78rem;color:var(--t3);text-align:center;margin-bottom:28px}
-.login-err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:10px 14px;font-size:.78rem;color:#fca5a5;margin-bottom:16px;display:none}
-.login-err.show{display:block}
+/* AUTH WRAPPER — tabs login/register */
+#auth-screen{position:fixed;inset:0;z-index:5000;background:rgba(7,7,14,.97);display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+#auth-screen.hidden{display:none}
+.auth-box{background:var(--card);border:1px solid var(--border2);border-radius:22px;padding:0;width:100%;max-width:420px;overflow:hidden}
+.auth-logo{padding:28px 28px 0;text-align:center}
+.auth-logo-icon{width:60px;height:60px;background:linear-gradient(135deg,var(--p),#6366f1);border-radius:18px;display:inline-flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:12px}
+.auth-logo-title{font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,#e2e0ff,var(--p4));-webkit-background-clip:text;color:transparent}
+.auth-logo-sub{font-size:.75rem;color:var(--t3);margin-top:3px;margin-bottom:20px}
 
-/* ─── APP LAYOUT ─── */
+/* Tab switcher */
+.auth-tabs{display:flex;border-bottom:1px solid var(--border);margin:0 0 0}
+.auth-tab{flex:1;padding:13px;background:transparent;border:none;color:var(--t2);font-size:.82rem;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;position:relative}
+.auth-tab.active{color:var(--p4);background:rgba(124,58,237,.07)}
+.auth-tab.active::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:2px;background:var(--p);border-radius:99px}
+
+.auth-form{padding:22px 28px 28px}
+.auth-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.22);border-radius:8px;padding:9px 12px;font-size:.76rem;color:#fca5a5;margin-bottom:14px;display:none}
+.auth-err.show{display:block}
+.auth-ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.22);border-radius:8px;padding:9px 12px;font-size:.76rem;color:#6ee7b7;margin-bottom:14px;display:none}
+.auth-ok.show{display:block}
+
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:.67rem;font-weight:600;color:var(--t2);margin-bottom:5px;letter-spacing:.07em;text-transform:uppercase}
+.fg .hint{font-size:.62rem;color:var(--t3);margin-top:4px}
+input,select,textarea{width:100%;padding:9px 13px;background:var(--bg3);border:1px solid var(--border2);color:var(--t1);font-family:var(--font);font-size:.82rem;border-radius:var(--r3);outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(124,58,237,.12)}
+input::placeholder{color:var(--t3)}
+.input-eye{position:relative}
+.input-eye input{padding-right:38px}
+.eye-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--t3);cursor:pointer;font-size:.9rem;padding:4px}
+.pw-hint{font-size:.65rem;color:var(--t3);margin-top:4px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:9px;font-size:.82rem;font-weight:600;border:none;cursor:pointer;font-family:var(--font);transition:all .15s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.3)}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(0)}
+.btn-secondary{background:rgba(255,255,255,.06);border:1px solid var(--border2);color:var(--t1)}
+.btn-danger{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.22);color:#fca5a5}
+.btn-danger:hover{background:rgba(239,68,68,.22)}
+.btn-green{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.22);color:#6ee7b7}
+.btn-amber{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.22);color:#fcd34d}
+.btn-sm{padding:5px 10px;font-size:.7rem}
+.btn-lg{padding:12px 24px;font-size:.86rem}
+.btn-full{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+/* APP LAYOUT */
 .app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:256px;background:rgba(13,13,26,.97);border-right:1px solid var(--border);backdrop-filter:blur(24px);display:flex;flex-direction:column;z-index:200;transition:transform .3s cubic-bezier(.4,0,.2,1)}
-.sidebar.hidden-mobile{transform:translateX(-100%)}
 .sidebar-logo{padding:22px 18px 18px;border-bottom:1px solid var(--border);cursor:pointer}
 .logo-mark{display:flex;align-items:center;gap:10px}
-.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--p),#6366f1);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem;font-weight:800;color:#fff}
-.logo-text{font-size:1.05rem;font-weight:800;letter-spacing:-.03em;background:linear-gradient(135deg,#e2e0ff,var(--p4));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.logo-ver{font-size:.6rem;color:var(--t3);font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--p),#6366f1);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:#fff;flex-shrink:0}
+.logo-text{font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,#e2e0ff,var(--p4));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-ver{font-size:.58rem;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
 .sidebar-nav{flex:1;padding:14px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
-.nav-section{font-size:.58rem;color:var(--t3);font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:12px 10px 5px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;color:var(--t2);font-size:.8rem;font-weight:500;border:none;background:transparent;width:100%;text-align:left;transition:all .15s;position:relative}
+.nav-section{font-size:.57rem;color:var(--t3);font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:12px 10px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;color:var(--t2);font-size:.8rem;font-weight:500;border:none;background:transparent;width:100%;text-align:left;transition:all .15s;position:relative;font-family:var(--font)}
 .nav-item:hover{background:rgba(124,58,237,.1);color:var(--t1)}
 .nav-item.active{background:rgba(124,58,237,.18);color:var(--p4)}
 .nav-item.active::before{content:'';position:absolute;left:0;top:22%;bottom:22%;width:3px;background:var(--p);border-radius:0 3px 3px 0}
-.nav-ic{font-size:1rem;width:18px;text-align:center;flex-shrink:0}
-.nav-badge{background:var(--red);color:#fff;font-size:.52rem;font-weight:800;padding:1px 5px;border-radius:100px;margin-left:auto}
+.nav-ic{font-size:.95rem;width:18px;text-align:center;flex-shrink:0}
 .sidebar-bottom{padding:14px 10px;border-top:1px solid var(--border)}
-.user-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:10px}
-.user-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.user-phone{font-size:.78rem;font-weight:600;color:var(--t1)}
-.user-status-badge{font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:20px}
-.badge-free{background:rgba(255,255,255,.07);color:var(--t3)}
-.badge-pro{background:rgba(16,185,129,.15);color:var(--green)}
-.badge-vip{background:rgba(124,58,237,.2);color:var(--p4)}
-.badge-banned{background:rgba(239,68,68,.15);color:var(--red)}
-.limit-bar-wrap{background:rgba(255,255,255,.06);border-radius:99px;height:4px;overflow:hidden;margin-bottom:4px}
-.limit-bar-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--p3));border-radius:99px;transition:width .3s}
-.limit-text{font-size:.62rem;color:var(--t3)}
-.logout-btn{width:100%;padding:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;color:#fca5a5;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font)}
-.logout-btn:hover{background:rgba(239,68,68,.2)}
+.user-card{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:11px 12px;margin-bottom:10px}
+.user-card-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.user-phone{font-size:.78rem;font-weight:600;font-family:var(--mono)}
+.status-pill{font-size:.58rem;font-weight:700;padding:2px 8px;border-radius:20px}
+.pill-free{background:rgba(255,255,255,.07);color:var(--t3)}
+.pill-pro{background:rgba(16,185,129,.15);color:var(--green)}
+.pill-vip{background:rgba(124,58,237,.2);color:var(--p4)}
+.pill-banned{background:rgba(239,68,68,.15);color:#fca5a5}
+.limit-track{height:4px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;margin-bottom:4px}
+.limit-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--p3));border-radius:99px;transition:width .3s}
+.limit-fill.warn{background:linear-gradient(90deg,var(--amber),var(--red))}
+.limit-txt{font-size:.6rem;color:var(--t3)}
+.logout-btn{width:100%;padding:8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);border-radius:8px;color:#fca5a5;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font)}
+.logout-btn:hover{background:rgba(239,68,68,.18)}
+
 .topbar{display:none;position:fixed;top:0;left:0;right:0;height:54px;background:rgba(7,7,14,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:150;align-items:center;padding:0 16px;gap:12px}
-.menu-btn{background:transparent;border:1px solid var(--border2);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t1);flex-shrink:0}
-.topbar-title{font-size:.9rem;font-weight:700;flex:1}
-.topbar-user{font-size:.7rem;color:var(--t2)}
+.menu-btn{background:transparent;border:1px solid var(--border2);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t1)}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:190;opacity:0;pointer-events:none;transition:opacity .3s}
 .overlay.show{opacity:1;pointer-events:all}
 .main{margin-left:256px;flex:1;padding:32px;min-height:100vh}
 .panel{display:none;animation:fadeUp .2s ease}
 .panel.active{display:block}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
 
-/* ─── CARDS & FORMS ─── */
 .page-header{margin-bottom:24px}
 .page-title{font-size:1.4rem;font-weight:800;letter-spacing:-.03em}
-.page-sub{font-size:.8rem;color:var(--t3);margin-top:4px}
+.page-sub{font-size:.78rem;color:var(--t3);margin-top:4px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;transition:border-color .2s}
 .card:hover{border-color:var(--border2)}
 .card-header{display:flex;align-items:center;gap:10px;margin-bottom:18px}
-.card-icon{width:32px;height:32px;background:linear-gradient(135deg,rgba(124,58,237,.25),rgba(99,102,241,.15));border:1px solid rgba(124,58,237,.25);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.card-icon{width:32px;height:32px;background:linear-gradient(135deg,rgba(124,58,237,.22),rgba(99,102,241,.12));border:1px solid rgba(124,58,237,.22);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem}
 .card-title{font-size:.88rem;font-weight:700}
-.card-sub{font-size:.7rem;color:var(--t3);margin-top:2px}
+.card-sub{font-size:.68rem;color:var(--t3);margin-top:2px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.fg{margin-bottom:14px}
-.fg:last-child{margin-bottom:0}
-.fg label{display:block;font-size:.68rem;font-weight:600;color:var(--t2);margin-bottom:5px;letter-spacing:.07em;text-transform:uppercase}
-.hint{font-size:.63rem;color:var(--t3);margin-top:4px}
-input,select,textarea{width:100%;padding:9px 13px;background:var(--bg3);border:1px solid var(--border2);color:var(--t1);font-family:var(--font);font-size:.82rem;border-radius:var(--r3);outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none}
-input:focus,select:focus,textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(124,58,237,.12)}
-input::placeholder,textarea::placeholder{color:var(--t3)}
-textarea{resize:vertical;min-height:80px}
-
-/* ─── BUTTONS ─── */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:.8rem;font-weight:600;border:none;cursor:pointer;font-family:var(--font);transition:all .15s;white-space:nowrap}
-.btn-primary{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.3)}
-.btn-primary:hover{background:linear-gradient(135deg,var(--p2),var(--p3));transform:translateY(-1px)}
-.btn-primary:active{transform:translateY(0)}
-.btn-secondary{background:rgba(255,255,255,.06);border:1px solid var(--border2);color:var(--t1)}
-.btn-secondary:hover{background:rgba(255,255,255,.1)}
-.btn-danger{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
-.btn-danger:hover{background:rgba(239,68,68,.25)}
-.btn-green{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
-.btn-green:hover{background:rgba(16,185,129,.25)}
-.btn-sm{padding:6px 12px;font-size:.72rem}
-.btn-lg{padding:12px 24px;font-size:.88rem}
-.btn-full{width:100%}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
-
-/* ─── STAT CARDS ─── */
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden}
-.stat-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,.04),transparent);pointer-events:none}
-.stat-label{font-size:.68rem;color:var(--t3);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.stat-label{font-size:.64rem;color:var(--t3);font-weight:600;letter-spacing:.09em;text-transform:uppercase;margin-bottom:7px}
 .stat-val{font-size:1.8rem;font-weight:800;letter-spacing:-.04em;line-height:1}
-.stat-sub{font-size:.7rem;color:var(--t3);margin-top:4px}
-.stat-icon{position:absolute;right:16px;top:16px;font-size:1.5rem;opacity:.4}
-
-/* ─── APIKEY CARD ─── */
-.apikey-card{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;margin-bottom:12px}
-.apikey-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.apikey-type{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:20px}
-.apikey-type.reaction{background:rgba(124,58,237,.2);color:var(--p4)}
-.apikey-type.downloader{background:rgba(6,182,212,.2);color:var(--cyan)}
-.apikey-type.hd{background:rgba(245,158,11,.2);color:var(--amber)}
-.apikey-val{font-family:var(--mono);font-size:.72rem;color:var(--t2);word-break:break-all;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;margin-bottom:8px}
-.apikey-actions{display:flex;gap:8px}
-
-/* ─── LIMIT DISPLAY ─── */
+.stat-sub{font-size:.68rem;color:var(--t3);margin-top:4px}
+.stat-icon{position:absolute;right:16px;top:14px;font-size:1.5rem;opacity:.35}
 .limit-display{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
 .limit-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .limit-nums{font-size:1.5rem;font-weight:800;letter-spacing:-.04em}
-.limit-nums span{font-size:.9rem;font-weight:400;color:var(--t3)}
-.limit-prog{height:6px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden}
-.limit-prog-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:99px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.limit-nums span{font-size:.85rem;font-weight:400;color:var(--t3)}
+.limit-prog{height:6px;background:rgba(255,255,255,.05);border-radius:99px;overflow:hidden}
+.limit-prog-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:99px;transition:width .4s}
 .limit-prog-fill.warn{background:linear-gradient(90deg,var(--amber),var(--red))}
-
-/* ─── TOAST ─── */
-#toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:320px}
-.toast{padding:12px 16px;border-radius:10px;font-size:.78rem;font-weight:500;display:flex;align-items:center;gap:10px;animation:toastIn .3s ease;backdrop-filter:blur(12px)}
-@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
-.toast.ok{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#6ee7b7}
-.toast.err{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
-.toast.info{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:#93c5fd}
-
-/* ─── BOT STATUS ─── */
-.bot-status-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
-.bot-status-row:last-child{border-bottom:none}
-.bot-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.bot-dot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
-.bot-dot.off{background:var(--t3)}
-.bot-num{font-size:.8rem;font-weight:600;margin-left:10px}
-.bot-state{font-size:.68rem;color:var(--t3)}
-
-/* ─── EMOJI SELECTOR ─── */
-.emoji-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.apikey-card{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.apikey-type{font-size:.66rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px}
+.apikey-type.reaction{background:rgba(124,58,237,.18);color:var(--p4)}
+.apikey-type.downloader{background:rgba(6,182,212,.18);color:var(--cyan)}
+.apikey-type.hd{background:rgba(245,158,11,.18);color:var(--amber)}
+.apikey-val{font-family:var(--mono);font-size:.7rem;color:var(--t2);word-break:break-all;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;margin-bottom:8px}
+.emoji-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
 .emoji-btn{width:38px;height:38px;border-radius:8px;background:var(--bg3);border:2px solid var(--border);cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.emoji-btn:hover{border-color:var(--p);background:rgba(124,58,237,.1);transform:scale(1.1)}
-.emoji-btn.selected{border-color:var(--p);background:rgba(124,58,237,.2)}
-.selected-emojis{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;min-height:32px}
-.sel-emoji-chip{background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);border-radius:6px;padding:3px 8px;font-size:.85rem;cursor:pointer;transition:all .15s}
-.sel-emoji-chip:hover{background:rgba(239,68,68,.15);border-color:var(--red)}
-
-/* ─── RESPONSE BOX ─── */
-.res-box{background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;font-family:var(--mono);font-size:.75rem;line-height:1.6;color:var(--t2);max-height:200px;overflow-y:auto;display:none}
+.emoji-btn:hover{border-color:var(--p);transform:scale(1.1)}
+.emoji-btn.selected{border-color:var(--p);background:rgba(124,58,237,.18)}
+.sel-chip{background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.28);border-radius:6px;padding:3px 8px;font-size:.9rem;cursor:pointer;transition:all .15s;display:inline-block}
+.sel-chip:hover{background:rgba(239,68,68,.14);border-color:var(--red)}
+.res-box{background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:13px 15px;font-family:var(--mono);font-size:.72rem;line-height:1.7;color:var(--t2);max-height:200px;overflow-y:auto;display:none}
 .res-box.show{display:block}
-.res-ok{color:var(--green)}
-.res-err{color:var(--red)}
+.bot-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.bot-row:last-child{border-bottom:none}
+.bot-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.bot-dot.on{background:var(--green);box-shadow:0 0 7px var(--green)}
+.bot-dot.off{background:var(--t3)}
+#toast-container{position:fixed;top:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:7px;max-width:300px}
+.toast{padding:11px 15px;border-radius:9px;font-size:.76rem;font-weight:500;animation:toastIn .3s ease;backdrop-filter:blur(12px)}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.toast.ok{background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.28);color:#6ee7b7}
+.toast.err{background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.28);color:#fca5a5}
+.toast.info{background:rgba(59,130,246,.14);border:1px solid rgba(59,130,246,.28);color:#93c5fd}
 
-/* ─── PROFILE ─── */
-.profile-avatar{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--p),var(--p2));display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:14px}
-.profile-name{font-size:1.2rem;font-weight:800}
-.profile-phone{font-size:.8rem;color:var(--t3);margin-bottom:16px;font-family:var(--mono)}
-
-/* ─── TABLE ─── */
-.tbl{width:100%;border-collapse:collapse;font-size:.78rem}
-.tbl th{padding:10px 14px;text-align:left;font-size:.64rem;font-weight:700;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border)}
-.tbl td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04)}
-.tbl tr:hover td{background:rgba(255,255,255,.02)}
-.tbl tr:last-child td{border-bottom:none}
-
-/* ─── COPY BTN ─── */
-.copy-btn{background:rgba(124,58,237,.15);border:none;border-radius:5px;padding:4px 8px;font-size:.65rem;color:var(--p4);cursor:pointer;font-family:var(--font);font-weight:600;transition:all .15s}
-.copy-btn:hover{background:rgba(124,58,237,.3)}
-
-/* ─── RESPONSIVE ─── */
 @media(max-width:900px){
   .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0)}
   .topbar{display:flex}
-  .main{margin-left:0;padding:72px 16px 24px}
-  .g3{grid-template-columns:1fr 1fr}
-  .g4{grid-template-columns:1fr 1fr}
+  .main{margin-left:0;padding:70px 16px 24px}
+  .g3,.g4{grid-template-columns:1fr 1fr}
 }
-@media(max-width:600px){
-  .g2,.g3,.g4{grid-template-columns:1fr}
-  .login-box{padding:24px 18px}
-}
+@media(max-width:580px){.g2,.g3,.g4{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="bg-mesh"></div>
 
-<!-- LOADING SCREEN -->
+<!-- LOADING -->
 <div id="loading-screen">
   <div class="loader-tech"><div class="loader-center"></div></div>
   <div class="loader-title">WA Reaction API</div>
   <div class="loader-sub">Memuat sistem...</div>
-  <div class="loader-bar"><div class="loader-bar-fill" id="loader-fill"></div></div>
-  <div class="loader-status" id="loader-status">Menginisialisasi...</div>
+  <div class="loader-bar"><div class="loader-bar-fill" id="ldr-fill"></div></div>
+  <div class="loader-status" id="ldr-status">Menginisialisasi...</div>
 </div>
 
 <!-- MAINTENANCE -->
 <div id="maintenance-screen" class="hidden">
-  <div>
-    <div class="maint-icon">🔧</div>
-    <div class="maint-title">Server Maintenance</div>
-    <div class="maint-msg" id="maint-msg-text">Server sedang dalam perbaikan. Mohon tunggu.</div>
-  </div>
+  <div style="font-size:3rem;margin-bottom:12px">🔧</div>
+  <div style="font-size:1.3rem;font-weight:800;margin-bottom:6px">Server Maintenance</div>
+  <div id="maint-txt" style="font-size:.82rem;color:var(--t2)">Server sedang dalam perbaikan.</div>
 </div>
 
-<!-- LOGIN MODAL -->
-<div id="login-modal">
-  <div class="login-box">
-    <div class="login-logo">📱</div>
-    <div class="login-title">Masuk ke Dashboard</div>
-    <div class="login-sub">Masukkan nomor WA dan password Anda</div>
-    <div class="login-err" id="login-err"></div>
-    <div class="fg">
-      <label>Nomor WhatsApp</label>
-      <input type="tel" id="login-phone" placeholder="628xxxxxxxxxx" maxlength="20"/>
+<!-- AUTH SCREEN (Login + Register) -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">📱</div>
+      <div class="auth-logo-title">WA Reaction API</div>
+      <div class="auth-logo-sub">Platform kirim reaction WhatsApp</div>
     </div>
-    <div class="fg">
-      <label>Password</label>
-      <input type="password" id="login-pass" placeholder="••••••" maxlength="30"/>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">🔐 Masuk</button>
+      <button class="auth-tab" id="tab-register" onclick="switchTab('register')">✨ Daftar</button>
     </div>
-    <button class="btn btn-primary btn-full btn-lg" onclick="doLogin()" id="login-btn">
-      🔐 Masuk
-    </button>
+
+    <!-- LOGIN FORM -->
+    <div class="auth-form" id="form-login">
+      <div class="auth-err" id="login-err"></div>
+      <div class="fg">
+        <label>Nomor WhatsApp</label>
+        <input type="tel" id="login-phone" placeholder="628xxxxxxxxxx" maxlength="20"/>
+        <div class="hint">Contoh: 628123456789</div>
+      </div>
+      <div class="fg">
+        <label>Password</label>
+        <div class="input-eye">
+          <input type="password" id="login-pass" placeholder="Masukkan password" maxlength="50"/>
+          <button class="eye-btn" onclick="togglePw('login-pass',this)" type="button">👁️</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full btn-lg" onclick="doLogin()" id="login-btn">🔐 Masuk</button>
+      <div style="text-align:center;margin-top:14px;font-size:.75rem;color:var(--t3)">
+        Belum punya akun? <span style="color:var(--p4);cursor:pointer;font-weight:600" onclick="switchTab('register')">Daftar di sini</span>
+      </div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div class="auth-form" id="form-register" style="display:none">
+      <div class="auth-err" id="reg-err"></div>
+      <div class="auth-ok" id="reg-ok"></div>
+      <div class="fg">
+        <label>Nomor WhatsApp</label>
+        <input type="tel" id="reg-phone" placeholder="628xxxxxxxxxx" maxlength="20"/>
+        <div class="hint">Contoh: 628123456789 (dengan kode negara)</div>
+      </div>
+      <div class="fg">
+        <label>Buat Password</label>
+        <div class="input-eye">
+          <input type="password" id="reg-pass" placeholder="Min. 6 karakter" maxlength="50"/>
+          <button class="eye-btn" onclick="togglePw('reg-pass',this)" type="button">👁️</button>
+        </div>
+        <div class="pw-hint">Minimal 6 karakter. Ingat password ini baik-baik!</div>
+      </div>
+      <div class="fg">
+        <label>Konfirmasi Password</label>
+        <div class="input-eye">
+          <input type="password" id="reg-pass2" placeholder="Ulangi password" maxlength="50"/>
+          <button class="eye-btn" onclick="togglePw('reg-pass2',this)" type="button">👁️</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full btn-lg" onclick="doRegister()" id="reg-btn">✨ Buat Akun</button>
+      <div style="text-align:center;margin-top:14px;font-size:.75rem;color:var(--t3)">
+        Sudah punya akun? <span style="color:var(--p4);cursor:pointer;font-weight:600" onclick="switchTab('login')">Masuk di sini</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -286,14 +291,12 @@ textarea{resize:vertical;min-height:80px}
 
 <!-- APP -->
 <div class="app" id="app" style="display:none">
-  <!-- TOPBAR -->
   <div class="topbar" id="topbar">
     <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-    <div class="topbar-title" id="topbar-title">Dashboard</div>
-    <div class="topbar-user" id="topbar-user"></div>
+    <div style="flex:1;font-size:.88rem;font-weight:700" id="topbar-title">Dashboard</div>
+    <div style="font-size:.68rem;color:var(--t2)" id="topbar-user"></div>
   </div>
 
-  <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-logo" onclick="navigate('home')">
       <div class="logo-mark">
@@ -306,29 +309,28 @@ textarea{resize:vertical;min-height:80px}
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section">Menu</div>
-      <button class="nav-item active" data-panel="home" onclick="navigate('home')"><span class="nav-ic">🏠</span> Home</button>
-      <button class="nav-item" data-panel="reaction" onclick="navigate('reaction')"><span class="nav-ic">💬</span> Reaction</button>
-      <button class="nav-item" data-panel="downloader" onclick="navigate('downloader')"><span class="nav-ic">⬇️</span> Downloader</button>
-      <button class="nav-item" data-panel="hd" onclick="navigate('hd')"><span class="nav-ic">🖼️</span> HD Image</button>
+      <button class="nav-item active" data-panel="home" onclick="navigate('home')"><span class="nav-ic">🏠</span>Home</button>
+      <button class="nav-item" data-panel="reaction" onclick="navigate('reaction')"><span class="nav-ic">💬</span>Reaction</button>
+      <button class="nav-item" data-panel="downloader" onclick="navigate('downloader')"><span class="nav-ic">⬇️</span>Downloader</button>
+      <button class="nav-item" data-panel="hd" onclick="navigate('hd')"><span class="nav-ic">🖼️</span>HD Image</button>
       <div class="nav-section">API</div>
-      <button class="nav-item" data-panel="apikey" onclick="navigate('apikey')"><span class="nav-ic">🔑</span> API Key</button>
+      <button class="nav-item" data-panel="apikey" onclick="navigate('apikey')"><span class="nav-ic">🔑</span>API Key</button>
       <div class="nav-section">Bot</div>
-      <button class="nav-item" data-panel="bot" onclick="navigate('bot')"><span class="nav-ic">🤖</span> Bot Status</button>
+      <button class="nav-item" data-panel="bot" onclick="navigate('bot')"><span class="nav-ic">🤖</span>Status Bot</button>
     </nav>
     <div class="sidebar-bottom">
-      <div class="user-card" id="sidebar-user-card">
-        <div class="user-card-top">
-          <span class="user-phone" id="sidebar-phone">-</span>
-          <span class="user-status-badge badge-free" id="sidebar-status">FREE</span>
+      <div class="user-card">
+        <div class="user-card-row">
+          <span class="user-phone" id="sb-phone">-</span>
+          <span class="status-pill pill-free" id="sb-status">FREE</span>
         </div>
-        <div class="limit-bar-wrap"><div class="limit-bar-fill" id="sidebar-limit-bar" style="width:0%"></div></div>
-        <div class="limit-text" id="sidebar-limit-text">Limit: 0/0</div>
+        <div class="limit-track"><div class="limit-fill" id="sb-limit-bar" style="width:0%"></div></div>
+        <div class="limit-txt" id="sb-limit-txt">Limit: 0/5</div>
       </div>
       <button class="logout-btn" onclick="doLogout()">🚪 Keluar</button>
     </div>
   </div>
 
-  <!-- MAIN -->
   <main class="main">
 
     <!-- HOME -->
@@ -337,329 +339,159 @@ textarea{resize:vertical;min-height:80px}
         <div class="page-title">🏠 Dashboard</div>
         <div class="page-sub">Selamat datang di WA Reaction API</div>
       </div>
-      <div class="g4" style="margin-bottom:20px">
-        <div class="stat-card">
-          <div class="stat-label">Status Akun</div>
-          <div class="stat-val" id="home-status">FREE</div>
-          <div class="stat-sub">Tipe langganan</div>
-          <div class="stat-icon">👤</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Limit Terpakai</div>
-          <div class="stat-val" id="home-limit-used">0</div>
-          <div class="stat-sub" id="home-limit-max">Dari 5 request</div>
-          <div class="stat-icon">📊</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Bot Aktif</div>
-          <div class="stat-val" id="home-bots">0</div>
-          <div class="stat-sub">Bot tersambung</div>
-          <div class="stat-icon">🤖</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Max Emoji</div>
-          <div class="stat-val" id="home-emoji">3</div>
-          <div class="stat-sub">Per request</div>
-          <div class="stat-icon">😊</div>
-        </div>
+      <div class="g4" style="margin-bottom:18px">
+        <div class="stat-card"><div class="stat-label">Status Akun</div><div class="stat-val" id="h-status">FREE</div><div class="stat-sub">Paket aktif</div><div class="stat-icon">👤</div></div>
+        <div class="stat-card"><div class="stat-label">Limit Terpakai</div><div class="stat-val" id="h-used">0</div><div class="stat-sub" id="h-max-sub">Dari 5 request</div><div class="stat-icon">📊</div></div>
+        <div class="stat-card"><div class="stat-label">Bot Aktif</div><div class="stat-val" id="h-bots">0</div><div class="stat-sub">Tersambung</div><div class="stat-icon">🤖</div></div>
+        <div class="stat-card"><div class="stat-label">Max Emoji</div><div class="stat-val" id="h-emoji">3</div><div class="stat-sub">Per request</div><div class="stat-icon">😊</div></div>
       </div>
       <div class="g2">
         <div class="card">
-          <div class="card-header">
-            <div class="card-icon">📈</div>
-            <div><div class="card-title">Penggunaan Limit</div><div class="card-sub">Sisa limit hari ini</div></div>
-          </div>
+          <div class="card-header"><div class="card-icon">📈</div><div><div class="card-title">Penggunaan Limit</div><div class="card-sub">Sisa limit hari ini</div></div></div>
           <div class="limit-display">
             <div class="limit-top">
-              <div>
-                <div class="limit-nums" id="home-limit-display">0 <span>/ 5</span></div>
-                <div style="font-size:.65rem;color:var(--t3);margin-top:3px">Reset: <span id="home-limit-reset">-</span></div>
-              </div>
-              <div style="font-size:1.5rem" id="home-limit-icon">✅</div>
+              <div><div class="limit-nums" id="h-limit-nums">0 <span>/ 5</span></div><div style="font-size:.62rem;color:var(--t3);margin-top:2px">Reset: <span id="h-reset-time">-</span></div></div>
+              <span id="h-limit-icon" style="font-size:1.4rem">✅</span>
             </div>
-            <div class="limit-prog"><div class="limit-prog-fill" id="home-limit-prog" style="width:0%"></div></div>
+            <div class="limit-prog"><div class="limit-prog-fill" id="h-limit-prog" style="width:0%"></div></div>
           </div>
         </div>
         <div class="card">
-          <div class="card-header">
-            <div class="card-icon">⚡</div>
-            <div><div class="card-title">Paket & Fitur</div><div class="card-sub">Status paket Anda</div></div>
-          </div>
-          <div id="home-pkg-info" style="font-size:.8rem;line-height:1.8;color:var(--t2)">
-            Memuat...
-          </div>
+          <div class="card-header"><div class="card-icon">⚡</div><div><div class="card-title">Paket & Fitur</div></div></div>
+          <div id="h-pkg-info" style="font-size:.78rem;color:var(--t2);line-height:1.9">Memuat...</div>
         </div>
       </div>
-      <div class="card" style="margin-top:18px">
-        <div class="card-header">
-          <div class="card-icon">🤖</div>
-          <div><div class="card-title">Status Bot Real-Time</div><div class="card-sub">Bot yang tersedia untuk proses request</div></div>
-        </div>
-        <div id="home-bot-list" style="color:var(--t3);font-size:.8rem">Memuat status bot...</div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-header"><div class="card-icon">🤖</div><div><div class="card-title">Status Bot Real-Time</div><div class="card-sub">Update otomatis</div></div></div>
+        <div id="h-bot-list" style="color:var(--t3);font-size:.78rem">Memuat...</div>
       </div>
     </div>
 
     <!-- REACTION -->
     <div class="panel" id="panel-reaction">
-      <div class="page-header">
-        <div class="page-title">💬 Reaction</div>
-        <div class="page-sub">Kirim emoji reaction ke saluran WhatsApp</div>
-      </div>
+      <div class="page-header"><div class="page-title">💬 Reaction</div><div class="page-sub">Kirim emoji reaction ke saluran WhatsApp</div></div>
       <div class="g2">
         <div>
-          <div class="card" style="margin-bottom:18px">
-            <div class="card-header">
-              <div class="card-icon">⚙️</div>
-              <div><div class="card-title">Kirim Reaction</div><div class="card-sub">Masukkan detail saluran</div></div>
-            </div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header"><div class="card-icon">⚙️</div><div><div class="card-title">Kirim Reaction</div></div></div>
+            <div class="fg"><label>Link Saluran WhatsApp</label><input type="url" id="rc-link" placeholder="https://whatsapp.com/channel/xxx"/><div class="hint">Paste link saluran WA di sini</div></div>
+            <div class="fg"><label>API Key</label><input type="text" id="rc-apikey" placeholder="ak_reaction_..." readonly style="cursor:default"/></div>
             <div class="fg">
-              <label>Link Saluran WhatsApp <span style="color:var(--red)">*</span></label>
-              <input type="url" id="rc-link" placeholder="https://whatsapp.com/channel/xxxx"/>
-              <div class="hint">Contoh: https://whatsapp.com/channel/0029VbXXXXXXX</div>
-            </div>
-            <div class="fg">
-              <label>API Key Reaction</label>
-              <input type="text" id="rc-apikey" placeholder="ak_reaction_..." readonly style="cursor:default"/>
-              <div class="hint">API Key dari menu API Key</div>
-            </div>
-            <div class="fg">
-              <label>Pilih Emoji <span id="rc-emoji-count" style="color:var(--t3)">(0 dipilih)</span></label>
+              <label>Pilih Emoji <span id="rc-emoji-count" style="color:var(--t3);font-weight:400">(0 dipilih)</span></label>
               <div class="emoji-grid" id="emoji-grid"></div>
-              <div class="selected-emojis" id="selected-emojis"></div>
-              <div class="hint" id="emoji-hint">Max <span id="emoji-max">3</span> emoji sesuai paket Anda</div>
+              <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;min-height:28px" id="sel-emojis"></div>
+              <div class="hint">Maks <span id="emoji-max-txt">3</span> emoji (paket <span id="emoji-status-txt">Free</span>)</div>
             </div>
-            <button class="btn btn-primary btn-full" onclick="sendReaction()" id="rc-btn">
-              🚀 Kirim Reaction
-            </button>
+            <button class="btn btn-primary btn-full" onclick="doSendReaction()" id="rc-btn">🚀 Kirim Reaction</button>
           </div>
         </div>
         <div>
-          <div class="card" style="margin-bottom:18px">
-            <div class="card-header">
-              <div class="card-icon">📊</div>
-              <div><div class="card-title">Limit Request</div></div>
-            </div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header"><div class="card-icon">📊</div><div><div class="card-title">Limit Hari Ini</div></div></div>
             <div class="limit-display">
-              <div class="limit-top">
-                <div>
-                  <div class="limit-nums"><span id="rc-used">0</span> <span>/ <span id="rc-max">5</span></span></div>
-                  <div style="font-size:.65rem;color:var(--t3);margin-top:3px">Request hari ini</div>
-                </div>
-              </div>
+              <div class="limit-top"><div><div class="limit-nums"><span id="rc-used">0</span> <span>/ <span id="rc-max">5</span></span></div></div></div>
               <div class="limit-prog"><div class="limit-prog-fill" id="rc-prog" style="width:0%"></div></div>
             </div>
           </div>
           <div class="card">
-            <div class="card-header">
-              <div class="card-icon">📋</div>
-              <div><div class="card-title">Contoh Request</div></div>
-            </div>
-            <div class="res-box show" style="background:var(--bg2)">
-<span style="color:var(--cyan)">POST</span> /api/reaction
-Content-Type: application/json
-
+            <div class="card-header"><div class="card-icon">📋</div><div><div class="card-title">Contoh Request</div></div></div>
+            <div class="res-box show" style="background:var(--bg2);font-size:.68rem">POST /api/reaction
 {
-  <span style="color:var(--p4)">"apikey"</span>: <span style="color:var(--green)">"ak_reaction_..."</span>,
-  <span style="color:var(--p4)">"channel_link"</span>: <span style="color:var(--green)">"https://whatsapp.com/channel/..."</span>,
-  <span style="color:var(--p4)">"emojis"</span>: [<span style="color:var(--green)">"👍"</span>, <span style="color:var(--green)">"❤️"</span>]
-}
-            </div>
+  "apikey": "ak_reaction_...",
+  "channel_link": "https://whatsapp.com/channel/...",
+  "emojis": ["👍","❤️"]
+}</div>
           </div>
         </div>
       </div>
-      <div class="card" style="margin-top:18px">
-        <div class="card-header">
-          <div class="card-icon">📤</div>
-          <div><div class="card-title">Response</div></div>
-        </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-header"><div class="card-icon">📤</div><div><div class="card-title">Response</div></div></div>
         <div class="res-box" id="rc-response"></div>
-        <div id="rc-res-placeholder" style="font-size:.78rem;color:var(--t3)">Response akan muncul di sini setelah kirim request.</div>
+        <div id="rc-ph" style="font-size:.75rem;color:var(--t3)">Response muncul setelah kirim request.</div>
       </div>
     </div>
 
     <!-- DOWNLOADER -->
     <div class="panel" id="panel-downloader">
-      <div class="page-header">
-        <div class="page-title">⬇️ Downloader</div>
-        <div class="page-sub">Download media dari berbagai platform</div>
-      </div>
+      <div class="page-header"><div class="page-title">⬇️ Downloader</div><div class="page-sub">Download media dari berbagai platform</div></div>
       <div class="g2">
         <div class="card">
-          <div class="card-header">
-            <div class="card-icon">🔗</div>
-            <div><div class="card-title">Download Media</div></div>
-          </div>
-          <div class="fg">
-            <label>URL Media</label>
-            <input type="url" id="dl-url" placeholder="https://tiktok.com/... atau Instagram..."/>
-          </div>
-          <div class="fg">
-            <label>API Key Downloader</label>
-            <input type="text" id="dl-apikey" placeholder="ak_downloader_..." readonly/>
-          </div>
-          <button class="btn btn-primary btn-full" onclick="doDownload()">⬇️ Proses Download</button>
+          <div class="card-header"><div class="card-icon">🔗</div><div><div class="card-title">Download Media</div></div></div>
+          <div class="fg"><label>URL Media</label><input type="url" id="dl-url" placeholder="https://tiktok.com/..."/></div>
+          <div class="fg"><label>API Key Downloader</label><input type="text" id="dl-apikey" placeholder="ak_downloader_..." readonly/></div>
+          <button class="btn btn-primary btn-full" onclick="doDownload()">⬇️ Proses</button>
         </div>
         <div class="card">
-          <div class="card-header">
-            <div class="card-icon">📊</div>
-            <div><div class="card-title">Limit</div></div>
-          </div>
+          <div class="card-header"><div class="card-icon">📊</div><div><div class="card-title">Limit</div></div></div>
           <div class="limit-display">
-            <div class="limit-top">
-              <div><div class="limit-nums"><span id="dl-used">0</span> <span>/ <span id="dl-max">5</span></span></div></div>
-            </div>
+            <div class="limit-top"><div><div class="limit-nums"><span id="dl-used">0</span><span>/ <span id="dl-max">5</span></span></div></div></div>
             <div class="limit-prog"><div class="limit-prog-fill" id="dl-prog" style="width:0%"></div></div>
           </div>
-          <div style="margin-top:14px">
-            <div style="font-size:.72rem;color:var(--t2);margin-bottom:8px;font-weight:600">Platform Didukung</div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px">
-              <span style="background:rgba(255,255,255,.06);border-radius:6px;padding:3px 10px;font-size:.7rem">TikTok</span>
-              <span style="background:rgba(255,255,255,.06);border-radius:6px;padding:3px 10px;font-size:.7rem">Instagram</span>
-              <span style="background:rgba(255,255,255,.06);border-radius:6px;padding:3px 10px;font-size:.7rem">YouTube</span>
-              <span style="background:rgba(255,255,255,.06);border-radius:6px;padding:3px 10px;font-size:.7rem">Facebook</span>
-              <span style="background:rgba(255,255,255,.06);border-radius:6px;padding:3px 10px;font-size:.7rem">Twitter/X</span>
-            </div>
-          </div>
+          <div style="margin-top:12px;font-size:.75rem;color:var(--t2);line-height:1.9">✅ TikTok &nbsp;✅ Instagram<br>✅ YouTube &nbsp;✅ Facebook</div>
         </div>
       </div>
-      <div class="card" style="margin-top:18px">
+      <div class="card" style="margin-top:16px">
         <div class="card-header"><div class="card-icon">📤</div><div><div class="card-title">Response</div></div></div>
         <div class="res-box" id="dl-response"></div>
-        <div id="dl-res-placeholder" style="font-size:.78rem;color:var(--t3)">Response akan muncul di sini.</div>
+        <div id="dl-ph" style="font-size:.75rem;color:var(--t3)">Response muncul di sini.</div>
       </div>
     </div>
 
     <!-- HD -->
     <div class="panel" id="panel-hd">
-      <div class="page-header">
-        <div class="page-title">🖼️ HD Image</div>
-        <div class="page-sub">Tingkatkan kualitas gambar hingga 4K</div>
-      </div>
+      <div class="page-header"><div class="page-title">🖼️ HD Image</div><div class="page-sub">Tingkatkan kualitas gambar hingga 4K</div></div>
       <div class="g2">
         <div class="card">
-          <div class="card-header">
-            <div class="card-icon">✨</div>
-            <div><div class="card-title">Enhance Gambar</div></div>
-          </div>
-          <div class="fg">
-            <label>URL Gambar</label>
-            <input type="url" id="hd-url" placeholder="https://example.com/gambar.jpg"/>
-          </div>
-          <div class="fg">
-            <label>API Key HD</label>
-            <input type="text" id="hd-apikey" placeholder="ak_hd_..." readonly/>
-          </div>
+          <div class="card-header"><div class="card-icon">✨</div><div><div class="card-title">Enhance Gambar</div></div></div>
+          <div class="fg"><label>URL Gambar</label><input type="url" id="hd-url" placeholder="https://example.com/img.jpg"/></div>
+          <div class="fg"><label>API Key HD</label><input type="text" id="hd-apikey" placeholder="ak_hd_..." readonly/></div>
           <button class="btn btn-primary btn-full" onclick="doHD()">✨ Proses HD</button>
         </div>
         <div class="card">
           <div class="card-header"><div class="card-icon">📊</div><div><div class="card-title">Limit</div></div></div>
           <div class="limit-display">
-            <div class="limit-top">
-              <div><div class="limit-nums"><span id="hd-used">0</span> <span>/ <span id="hd-max">5</span></span></div></div>
-            </div>
+            <div class="limit-top"><div><div class="limit-nums"><span id="hd-used">0</span><span>/ <span id="hd-max">5</span></span></div></div></div>
             <div class="limit-prog"><div class="limit-prog-fill" id="hd-prog" style="width:0%"></div></div>
           </div>
-          <div style="margin-top:14px;font-size:.78rem;color:var(--t2)">
-            <div style="margin-bottom:4px">✅ Upscale hingga 4x resolusi</div>
-            <div style="margin-bottom:4px">✅ Format JPG, PNG, WebP</div>
-            <div>✅ AI-powered enhancement</div>
-          </div>
+          <div style="margin-top:12px;font-size:.75rem;color:var(--t2);line-height:1.9">✅ Upscale 4x resolusi<br>✅ JPG, PNG, WebP</div>
         </div>
       </div>
-      <div class="card" style="margin-top:18px">
+      <div class="card" style="margin-top:16px">
         <div class="card-header"><div class="card-icon">📤</div><div><div class="card-title">Response</div></div></div>
         <div class="res-box" id="hd-response"></div>
-        <div id="hd-res-placeholder" style="font-size:.78rem;color:var(--t3)">Response akan muncul di sini.</div>
+        <div id="hd-ph" style="font-size:.75rem;color:var(--t3)">Response muncul di sini.</div>
       </div>
     </div>
 
     <!-- APIKEY -->
     <div class="panel" id="panel-apikey">
-      <div class="page-header">
-        <div class="page-title">🔑 API Key</div>
-        <div class="page-sub">Kelola API Key untuk mengakses layanan</div>
+      <div class="page-header"><div class="page-title">🔑 API Key</div><div class="page-sub">Generate dan kelola API Key Anda</div></div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header"><div class="card-icon">ℹ️</div><div><div class="card-title">Cara Kerja</div></div></div>
+        <div style="font-size:.78rem;color:var(--t2);line-height:1.8">API Key digunakan website/app lain untuk mengirim request ke server ini. Setiap request mengurangi limit harian Anda.</div>
       </div>
-      <div class="card" style="margin-bottom:18px">
-        <div class="card-header">
-          <div class="card-icon">ℹ️</div>
-          <div><div class="card-title">Cara Kerja API Key</div></div>
-        </div>
-        <div style="font-size:.8rem;color:var(--t2);line-height:1.8">
-          API Key digunakan oleh website/aplikasi lain (Web B) untuk mengirim request ke server ini (Web A). 
-          Setiap request yang menggunakan API Key akan mengurangi limit Anda. 
-          Terdapat 3 tipe API Key: <b style="color:var(--p4)">Reaction</b>, <b style="color:var(--cyan)">Downloader</b>, dan <b style="color:var(--amber)">HD Image</b>.
-        </div>
-      </div>
-      <div id="apikey-list">
-        <div style="color:var(--t3);font-size:.8rem;text-align:center;padding:24px">Memuat API Key...</div>
-      </div>
-      <div class="card" style="margin-top:18px">
-        <div class="card-header">
-          <div class="card-icon">➕</div>
-          <div><div class="card-title">Buat API Key Baru</div></div>
-        </div>
+      <div id="apikey-list"><div style="text-align:center;color:var(--t3);padding:20px;font-size:.78rem">Memuat...</div></div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-header"><div class="card-icon">➕</div><div><div class="card-title">Generate API Key</div></div></div>
         <div class="g3">
-          <button class="btn btn-secondary" onclick="generateKey('reaction')">💬 Generate Reaction</button>
-          <button class="btn btn-secondary" onclick="generateKey('downloader')">⬇️ Generate Downloader</button>
-          <button class="btn btn-secondary" onclick="generateKey('hd')">🖼️ Generate HD</button>
-        </div>
-      </div>
-      <div class="card" style="margin-top:18px">
-        <div class="card-header">
-          <div class="card-icon">📋</div>
-          <div><div class="card-title">Contoh Integrasi (Web B → Web A)</div></div>
-        </div>
-        <div class="res-box show" style="background:var(--bg2)">
-<span style="color:var(--t3)">// Web B mengirim request ke Web A (server Anda)</span>
-<span style="color:var(--amber)">const</span> res = <span style="color:var(--blue)">await</span> fetch(<span style="color:var(--green)">'https://webA.com/api/reaction'</span>, {
-  method: <span style="color:var(--green)">'POST'</span>,
-  headers: { <span style="color:var(--green)">'Content-Type'</span>: <span style="color:var(--green)">'application/json'</span> },
-  body: JSON.stringify({
-    apikey: <span style="color:var(--green)">'ak_reaction_xxxx'</span>,
-    channel_link: <span style="color:var(--green)">'https://whatsapp.com/channel/...'</span>,
-    emojis: [<span style="color:var(--green)">'👍'</span>, <span style="color:var(--green)">'❤️'</span>]
-  })
-});
-<span style="color:var(--amber)">const</span> data = <span style="color:var(--blue)">await</span> res.json();
-<span style="color:var(--t3)">// { success: true, message: 'Reaction berhasil dikirim.', ... }</span>
+          <button class="btn btn-secondary" onclick="genKey('reaction')">💬 Reaction</button>
+          <button class="btn btn-secondary" onclick="genKey('downloader')">⬇️ Downloader</button>
+          <button class="btn btn-secondary" onclick="genKey('hd')">🖼️ HD</button>
         </div>
       </div>
     </div>
 
     <!-- BOT -->
     <div class="panel" id="panel-bot">
-      <div class="page-header">
-        <div class="page-title">🤖 Status Bot</div>
-        <div class="page-sub">Status bot real-time yang dikaitkan oleh admin</div>
-      </div>
-      <div class="g3" style="margin-bottom:18px">
-        <div class="stat-card">
-          <div class="stat-label">Total Bot</div>
-          <div class="stat-val" id="bot-total">0</div>
-          <div class="stat-sub">Terdaftar</div>
-          <div class="stat-icon">🤖</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Bot Aktif</div>
-          <div class="stat-val" id="bot-active" style="color:var(--green)">0</div>
-          <div class="stat-sub">Tersambung</div>
-          <div class="stat-icon">✅</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Request Reaction</div>
-          <div class="stat-val" id="bot-requests">0</div>
-          <div class="stat-sub">Total diproses</div>
-          <div class="stat-icon">📊</div>
-        </div>
+      <div class="page-header"><div class="page-title">🤖 Status Bot</div><div class="page-sub">Real-time tanpa refresh</div></div>
+      <div class="g3" style="margin-bottom:16px">
+        <div class="stat-card"><div class="stat-label">Total Bot</div><div class="stat-val" id="bot-total">0</div><div class="stat-icon">🤖</div></div>
+        <div class="stat-card"><div class="stat-label">Aktif</div><div class="stat-val" id="bot-active" style="color:var(--green)">0</div><div class="stat-icon">✅</div></div>
+        <div class="stat-card"><div class="stat-label">Request</div><div class="stat-val" id="bot-req">0</div><div class="stat-icon">📊</div></div>
       </div>
       <div class="card">
-        <div class="card-header">
-          <div class="card-icon">📡</div>
-          <div><div class="card-title">Daftar Bot</div><div class="card-sub">Update real-time tanpa refresh</div></div>
-        </div>
-        <div id="bot-list-main">
-          <div style="color:var(--t3);font-size:.8rem;text-align:center;padding:24px">Memuat data bot...</div>
-        </div>
+        <div class="card-header"><div class="card-icon">📡</div><div><div class="card-title">Daftar Bot</div><div class="card-sub">Update real-time</div></div></div>
+        <div id="bot-list-main" style="color:var(--t3);font-size:.78rem;text-align:center;padding:20px">Memuat...</div>
       </div>
     </div>
 
@@ -668,605 +500,411 @@ Content-Type: application/json
 
 <script src="api.js"></script>
 <script>
-// ─────────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────────
-var TOKEN_KEY = 'wa_api_token';
+// ── STATE ──────────────────────────────────────
+var TK = 'wa_api_token';
 var currentUser = null;
-var selectedEmojis = [];
+var selEmojis = [];
 var socket = null;
-var _loginAttempts = { count: 0, lockedUntil: null, resetAt: 0 };
+var _botData = [];
+var _loginTries = {n:0,lock:0};
+var _regTries = {n:0,lock:0};
 
-var ALL_EMOJIS = [
-  '👍','❤️','😂','😮','😢','🙏','🔥','💯','👏','✅',
-  '😍','🎉','💪','🥰','😎','🤔','😅','🙌','❗','⭐',
-  '💥','🌟','👑','💎','🚀','🎯','💫','✨','🏆','🎊'
-];
+var EMOJIS = ['👍','❤️','😂','😮','😢','🙏','🔥','💯','👏','✅','😍','🎉','💪','🥰','😎','🤔','😅','🙌','❗','⭐','💥','🌟','👑','💎','🚀','🎯','💫','✨','🏆','🎊'];
 
-// ─────────────────────────────────────────────
-// LOADING
-// ─────────────────────────────────────────────
-var _loadPct = 0;
-function setLoader(pct, msg) {
-  _loadPct = pct;
-  document.getElementById('loader-fill').style.width = pct + '%';
-  document.getElementById('loader-status').textContent = msg;
-}
+// ── LOADING ───────────────────────────────────
+function setLdr(pct,msg){document.getElementById('ldr-fill').style.width=pct+'%';document.getElementById('ldr-status').textContent=msg}
+function hideLdr(){document.getElementById('loading-screen').classList.add('hidden')}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 
-async function bootApp() {
-  setLoader(15, 'Memeriksa koneksi server...');
-  await sleep(300);
-
-  // Check maintenance
-  try {
-    var s = await API.getStatus();
-    if (s.data?.maintenance) {
-      document.getElementById('maint-msg-text').textContent = s.data.maintenance_msg || 'Server maintenance.';
+// ── BOOT ──────────────────────────────────────
+async function boot(){
+  setLdr(15,'Memeriksa server...');await sleep(300);
+  try{
+    var s=await API.getStatus();
+    if(s.data?.maintenance){
+      document.getElementById('maint-txt').textContent=s.data.maintenance_msg||'Maintenance.';
       document.getElementById('maintenance-screen').classList.remove('hidden');
-      document.getElementById('loading-screen').classList.add('hidden');
-      return;
+      hideLdr();return;
     }
-  } catch(e) {}
-
-  setLoader(40, 'Memeriksa sesi login...');
-  await sleep(400);
-
-  var savedToken = localStorage.getItem(TOKEN_KEY);
-  if (savedToken) {
-    setLoader(65, 'Memverifikasi token...');
-    await sleep(300);
-    var r = await API.verifyToken(savedToken);
-    if (r.data?.success) {
-      currentUser = r.data.user;
-      setLoader(85, 'Memuat dashboard...');
-      await sleep(300);
-      setLoader(100, 'Siap!');
-      await sleep(300);
-      hideLoader();
-      showApp();
-      return;
-    } else {
-      localStorage.removeItem(TOKEN_KEY);
-    }
+  }catch(e){}
+  setLdr(50,'Memeriksa sesi...');await sleep(350);
+  var tk=localStorage.getItem(TK);
+  if(tk){
+    var r=await API.verifyToken(tk);
+    if(r.data?.success){
+      currentUser=r.data.user;
+      setLdr(100,'Siap!');await sleep(250);
+      hideLdr();showApp();return;
+    }else localStorage.removeItem(TK);
   }
-
-  setLoader(100, 'Siap!');
-  await sleep(300);
-  hideLoader();
-  showLoginModal();
+  setLdr(100,'Siap!');await sleep(250);
+  hideLdr();
+  // show auth screen
+  document.getElementById('auth-screen').classList.remove('hidden');
 }
 
-function hideLoader() {
-  document.getElementById('loading-screen').classList.add('hidden');
-}
-
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-// ─────────────────────────────────────────────
-// LOGIN
-// ─────────────────────────────────────────────
-function showLoginModal() {
-  document.getElementById('login-modal').classList.remove('hidden');
-  document.getElementById('login-phone').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-  document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-}
-
-async function doLogin() {
-  var now = Date.now();
-  if (_loginAttempts.lockedUntil && now < _loginAttempts.lockedUntil) {
-    var sec = Math.ceil((_loginAttempts.lockedUntil - now) / 1000);
-    showLoginErr('Terlalu banyak percobaan. Tunggu ' + sec + ' detik.');
-    return;
-  }
-  if (now > (_loginAttempts.resetAt || 0)) { _loginAttempts.count = 0; _loginAttempts.resetAt = now + 300000; }
-
-  var phone = document.getElementById('login-phone').value.replace(/\D/g,'');
-  var pass = document.getElementById('login-pass').value;
-
-  if (!phone || phone.length < 6) { showLoginErr('Nomor WA tidak valid.'); return; }
-  if (!pass) { showLoginErr('Password wajib diisi.'); return; }
-
-  var btn = document.getElementById('login-btn');
-  btn.disabled = true; btn.textContent = 'Memproses...';
-
-  var r = await API.login(phone, pass);
-
-  if (r.data?.success) {
-    _loginAttempts = { count: 0, lockedUntil: null, resetAt: 0 };
-    currentUser = r.data.user;
-    localStorage.setItem(TOKEN_KEY, r.data.token);
-    document.getElementById('login-modal').classList.add('hidden');
-    showApp();
-  } else {
-    _loginAttempts.count++;
-    if (_loginAttempts.count >= 5) { _loginAttempts.lockedUntil = now + 60000; }
-    showLoginErr(r.data?.error || 'Login gagal.');
-    document.getElementById('login-pass').value = '';
-    shakeEl(document.querySelector('.login-box'));
-    btn.disabled = false; btn.textContent = '🔐 Masuk';
-  }
-}
-
-function showLoginErr(msg) {
-  var el = document.getElementById('login-err');
-  el.textContent = msg; el.classList.add('show');
-  document.getElementById('login-btn').disabled = false;
-  document.getElementById('login-btn').textContent = '🔐 Masuk';
-}
-
-function shakeEl(el) {
-  el.style.animation = 'shake .4s ease';
-  setTimeout(() => el.style.animation = '', 400);
-}
-
-function doLogout() {
-  localStorage.removeItem(TOKEN_KEY);
-  currentUser = null;
-  if (socket) { try { socket.disconnect(); } catch(e){} }
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-modal').classList.remove('hidden');
+// ── TAB SWITCH ────────────────────────────────
+function switchTab(t){
+  document.getElementById('tab-login').classList.toggle('active',t==='login');
+  document.getElementById('tab-register').classList.toggle('active',t==='register');
+  document.getElementById('form-login').style.display=t==='login'?'block':'none';
+  document.getElementById('form-register').style.display=t==='register'?'block':'none';
   document.getElementById('login-err').classList.remove('show');
-  document.getElementById('login-phone').value = '';
-  document.getElementById('login-pass').value = '';
+  document.getElementById('reg-err').classList.remove('show');
+  document.getElementById('reg-ok').classList.remove('show');
 }
 
-// ─────────────────────────────────────────────
-// APP
-// ─────────────────────────────────────────────
-function showApp() {
-  document.getElementById('app').style.display = 'flex';
-  updateUserUI();
-  buildEmojiGrid();
-  navigate('home');
-  connectSocket();
-  setInterval(refreshUserInfo, 30000);
+// ── PASSWORD TOGGLE ───────────────────────────
+function togglePw(id,btn){
+  var el=document.getElementById(id);
+  var show=el.type==='password';
+  el.type=show?'text':'password';
+  btn.textContent=show?'🙈':'👁️';
 }
 
-function updateUserUI() {
-  if (!currentUser) return;
-  var u = currentUser;
-  var statusMap = { free: 'FREE', pro: 'PRO', vip: 'VIP' };
-  var badgeMap = { free: 'badge-free', pro: 'badge-pro', vip: 'badge-vip', banned: 'badge-banned' };
-
-  document.getElementById('sidebar-phone').textContent = u.phone;
-  var sb = document.getElementById('sidebar-status');
-  sb.textContent = statusMap[u.status] || u.status.toUpperCase();
-  sb.className = 'user-status-badge ' + (badgeMap[u.status] || 'badge-free');
-
-  var maxL = u.limit_max || getLocalMax(u.status);
-  var pct = maxL > 0 ? Math.min(100, (u.limit_used / maxL) * 100) : 0;
-  document.getElementById('sidebar-limit-bar').style.width = pct + '%';
-  document.getElementById('sidebar-limit-text').textContent = 'Limit: ' + u.limit_used + '/' + maxL;
-  document.getElementById('topbar-user').textContent = u.phone;
-}
-
-function getLocalMax(status) {
-  if (status === 'vip') return 999999;
-  if (status === 'pro') return 80;
-  return 5;
-}
-
-async function refreshUserInfo() {
-  var token = localStorage.getItem(TOKEN_KEY);
-  if (!token) return;
-  var r = await API.getUserInfo(token);
-  if (r.data?.success) {
-    currentUser = { ...currentUser, ...r.data.user };
-    updateUserUI();
-    updatePanelLimits();
+// ── LOGIN ─────────────────────────────────────
+async function doLogin(){
+  var now=Date.now();
+  if(_loginTries.lock>now){toast('Tunggu '+(Math.ceil((_loginTries.lock-now)/1000))+'s lagi.','err');return;}
+  var phone=document.getElementById('login-phone').value.replace(/\D/g,'');
+  var pass=document.getElementById('login-pass').value;
+  if(!phone||phone.length<6){showErr('login-err','Nomor WA tidak valid.');return;}
+  if(!pass){showErr('login-err','Password wajib diisi.');return;}
+  var btn=document.getElementById('login-btn');
+  btn.disabled=true;btn.textContent='⏳ Memproses...';
+  var r=await API.login(phone,pass);
+  if(r.data?.success){
+    _loginTries={n:0,lock:0};
+    currentUser=r.data.user;
+    localStorage.setItem(TK,r.data.token);
+    document.getElementById('auth-screen').classList.add('hidden');
+    showApp();
+  }else{
+    _loginTries.n++;
+    if(_loginTries.n>=5)_loginTries.lock=now+60000;
+    showErr('login-err',r.data?.error||'Login gagal. Cek nomor & password.');
+    shakeEl(document.querySelector('.auth-box'));
+    document.getElementById('login-pass').value='';
+    btn.disabled=false;btn.textContent='🔐 Masuk';
   }
 }
 
-function updatePanelLimits() {
-  if (!currentUser) return;
-  var u = currentUser;
-  var maxL = u.limit_max || getLocalMax(u.status);
-  var pct = maxL > 0 ? Math.min(100, (u.limit_used / maxL) * 100) : 0;
-  var isFull = u.limit_used >= maxL;
-
-  // Home
-  document.getElementById('home-status').textContent = (u.status||'free').toUpperCase();
-  document.getElementById('home-limit-used').textContent = u.limit_used;
-  document.getElementById('home-limit-max').textContent = 'Dari ' + maxL + ' request';
-  document.getElementById('home-limit-display').innerHTML = u.limit_used + ' <span>/ ' + maxL + '</span>';
-  document.getElementById('home-emoji').textContent = u.emoji_limit || 3;
-  if (u.limit_reset) {
-    document.getElementById('home-limit-reset').textContent = new Date(u.limit_reset).toLocaleString('id-ID');
+// ── REGISTER ──────────────────────────────────
+async function doRegister(){
+  var now=Date.now();
+  if(_regTries.lock>now){toast('Tunggu '+(Math.ceil((_regTries.lock-now)/1000))+'s lagi.','err');return;}
+  var phone=document.getElementById('reg-phone').value.replace(/\D/g,'');
+  var pass=document.getElementById('reg-pass').value;
+  var pass2=document.getElementById('reg-pass2').value;
+  document.getElementById('reg-err').classList.remove('show');
+  document.getElementById('reg-ok').classList.remove('show');
+  if(!phone||phone.length<6){showErr('reg-err','Nomor WA tidak valid.');return;}
+  if(!pass||pass.length<6){showErr('reg-err','Password minimal 6 karakter.');return;}
+  if(pass!==pass2){showErr('reg-err','Konfirmasi password tidak cocok.');return;}
+  var btn=document.getElementById('reg-btn');
+  btn.disabled=true;btn.textContent='⏳ Mendaftarkan...';
+  var r=await API.register(phone,pass);
+  if(r.data?.success){
+    _regTries={n:0,lock:0};
+    document.getElementById('reg-ok').textContent='✅ Akun berhasil dibuat! Silakan masuk.';
+    document.getElementById('reg-ok').classList.add('show');
+    document.getElementById('reg-phone').value='';
+    document.getElementById('reg-pass').value='';
+    document.getElementById('reg-pass2').value='';
+    setTimeout(()=>switchTab('login'),1800);
+  }else{
+    _regTries.n++;
+    if(_regTries.n>=5)_regTries.lock=now+60000;
+    showErr('reg-err',r.data?.error||'Gagal mendaftar.');
+    shakeEl(document.querySelector('.auth-box'));
   }
-  var prog = document.getElementById('home-limit-prog');
-  prog.style.width = pct + '%';
-  prog.className = 'limit-prog-fill' + (isFull ? ' warn' : '');
-  document.getElementById('home-limit-icon').textContent = isFull ? '❌' : pct > 70 ? '⚠️' : '✅';
+  btn.disabled=false;btn.textContent='✨ Buat Akun';
+}
 
-  // Pkg info
-  var pkgInfo = {
-    free: '📦 Paket Free\n• Limit: 5 request/hari\n• Max emoji: 3 per request\n• Max reaction: 15 emoji total\n• Delay: 3 menit',
-    pro: '🌟 Paket Pro\n• Limit: 80 request/hari\n• Max emoji: 5 per request\n• Max reaction: 100 emoji total\n• Delay: 3 menit',
-    vip: '👑 Paket VIP\n• Limit: Unlimited\n• Max emoji: 300 per request\n• Max reaction: 300 emoji total\n• Semua emoji tersedia'
+function doLogout(){
+  localStorage.removeItem(TK);currentUser=null;
+  if(socket){try{socket.disconnect();}catch(e){}}
+  document.getElementById('app').style.display='none';
+  document.getElementById('auth-screen').classList.remove('hidden');
+  switchTab('login');
+}
+
+// ── SHOW APP ──────────────────────────────────
+function showApp(){
+  document.getElementById('app').style.display='flex';
+  updateUserUI();buildEmojiGrid();navigate('home');
+  connectSocket();setInterval(refreshUser,30000);
+}
+
+function updateUserUI(){
+  if(!currentUser)return;
+  var u=currentUser;
+  var maxL=u.limit_max||localMax(u.status);
+  var pct=maxL>0?Math.min(100,(u.limit_used/maxL)*100):0;
+  var statusMap={free:'FREE',pro:'PRO',vip:'VIP'};
+  var pillMap={free:'pill-free',pro:'pill-pro',vip:'pill-vip',banned:'pill-banned'};
+  document.getElementById('sb-phone').textContent=u.phone;
+  var sp=document.getElementById('sb-status');
+  sp.textContent=statusMap[u.status]||u.status.toUpperCase();
+  sp.className='status-pill '+(pillMap[u.status]||'pill-free');
+  var lf=document.getElementById('sb-limit-bar');
+  lf.style.width=pct+'%';
+  lf.className='limit-fill'+(pct>=80?' warn':'');
+  document.getElementById('sb-limit-txt').textContent='Limit: '+u.limit_used+'/'+maxL;
+  document.getElementById('topbar-user').textContent=u.phone;
+
+  // Home panel
+  document.getElementById('h-status').textContent=(u.status||'free').toUpperCase();
+  document.getElementById('h-used').textContent=u.limit_used;
+  document.getElementById('h-max-sub').textContent='Dari '+maxL+' request';
+  document.getElementById('h-emoji').textContent=u.emoji_limit||3;
+  document.getElementById('h-limit-nums').innerHTML=u.limit_used+' <span>/ '+maxL+'</span>';
+  if(u.limit_reset)document.getElementById('h-reset-time').textContent=new Date(u.limit_reset).toLocaleString('id-ID');
+  var hp=document.getElementById('h-limit-prog');
+  hp.style.width=pct+'%';hp.className='limit-prog-fill'+(pct>=80?' warn':'');
+  document.getElementById('h-limit-icon').textContent=pct>=100?'❌':pct>=70?'⚠️':'✅';
+
+  var pkgs={
+    free:'📦 Paket Free\n• Limit: 5 request/hari\n• Max emoji: 3 per kirim\n• Max reaction: 15 total\n• Delay: 3 menit',
+    pro:'🌟 Paket Pro\n• Limit: 80 request/hari\n• Max emoji: 5 per kirim\n• Max reaction: 100 total\n• Delay: 3 menit',
+    vip:'👑 Paket VIP\n• Limit: Unlimited\n• Max emoji: 300 per kirim\n• Max reaction: 300 total\n• Semua emoji tersedia'
   };
-  document.getElementById('home-pkg-info').innerHTML = (pkgInfo[u.status] || pkgInfo.free).replace(/\n/g, '<br>');
+  document.getElementById('h-pkg-info').innerHTML=(pkgs[u.status]||pkgs.free).replace(/\n/g,'<br>');
 
-  // Reaction
-  ['rc','dl','hd'].forEach(prefix => {
-    var usedEl = document.getElementById(prefix+'-used');
-    var maxEl = document.getElementById(prefix+'-max');
-    var progEl = document.getElementById(prefix+'-prog');
-    if (usedEl) usedEl.textContent = u.limit_used;
-    if (maxEl) maxEl.textContent = maxL;
-    if (progEl) { progEl.style.width = pct + '%'; progEl.className = 'limit-prog-fill' + (isFull ? ' warn' : ''); }
+  // Reaction / DL / HD limit
+  ['rc','dl','hd'].forEach(p=>{
+    var ue=document.getElementById(p+'-used');var me=document.getElementById(p+'-max');var pe=document.getElementById(p+'-prog');
+    if(ue)ue.textContent=u.limit_used;if(me)me.textContent=maxL;
+    if(pe){pe.style.width=pct+'%';pe.className='limit-prog-fill'+(pct>=80?' warn':'');}
   });
-
-  // Emoji max hint
-  document.getElementById('emoji-max').textContent = u.emoji_limit || 3;
+  document.getElementById('emoji-max-txt').textContent=u.emoji_limit||3;
+  document.getElementById('emoji-status-txt').textContent=(u.status||'free').toUpperCase();
 
   // Autofill apikeys
-  if (u.apikeys) {
-    if (u.apikeys.reaction && document.getElementById('rc-apikey')) document.getElementById('rc-apikey').value = u.apikeys.reaction;
-    if (u.apikeys.downloader && document.getElementById('dl-apikey')) document.getElementById('dl-apikey').value = u.apikeys.downloader;
-    if (u.apikeys.hd && document.getElementById('hd-apikey')) document.getElementById('hd-apikey').value = u.apikeys.hd;
+  if(u.apikeys){
+    var m={reaction:'rc-apikey',downloader:'dl-apikey',hd:'hd-apikey'};
+    Object.entries(m).forEach(([t,id])=>{var el=document.getElementById(id);if(el&&u.apikeys[t])el.value=u.apikeys[t];});
   }
 }
 
-// ─────────────────────────────────────────────
-// NAVIGATION
-// ─────────────────────────────────────────────
-function navigate(panel) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  var target = document.getElementById('panel-'+panel);
-  if (target) target.classList.add('active');
-  var navTarget = document.querySelector('[data-panel="'+panel+'"]');
-  if (navTarget) navTarget.classList.add('active');
-  var titles = { home:'Dashboard', reaction:'Reaction', downloader:'Downloader', hd:'HD Image', apikey:'API Key', bot:'Status Bot' };
-  document.getElementById('topbar-title').textContent = titles[panel] || panel;
+function localMax(s){if(s==='vip')return 999999;if(s==='pro')return 80;return 5;}
+
+async function refreshUser(){
+  var tk=localStorage.getItem(TK);if(!tk)return;
+  var r=await API.getUserInfo(tk);
+  if(r.data?.success){currentUser={...currentUser,...r.data.user};updateUserUI();}
+}
+
+// ── NAVIGATE ──────────────────────────────────
+function navigate(p){
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  var tp=document.getElementById('panel-'+p);if(tp)tp.classList.add('active');
+  var tn=document.querySelector('[data-panel="'+p+'"]');if(tn)tn.classList.add('active');
+  var titles={home:'Dashboard',reaction:'Reaction',downloader:'Downloader',hd:'HD Image',apikey:'API Key',bot:'Status Bot'};
+  document.getElementById('topbar-title').textContent=titles[p]||p;
   closeSidebar();
-  refreshUserInfo();
-  if (panel === 'apikey') loadApiKeys();
-  if (panel === 'bot') renderBotList(window._botData || []);
+  if(p==='apikey')loadApiKeys();
+  refreshUser();
 }
 
-function toggleSidebar() {
-  var sb = document.getElementById('sidebar');
-  var ov = document.getElementById('overlay');
-  sb.classList.toggle('open');
-  ov.classList.toggle('show');
-}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
 
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('overlay').classList.remove('show');
-}
-
-// ─────────────────────────────────────────────
-// EMOJI
-// ─────────────────────────────────────────────
-function buildEmojiGrid() {
-  var grid = document.getElementById('emoji-grid');
-  grid.innerHTML = '';
-  ALL_EMOJIS.forEach(em => {
-    var btn = document.createElement('button');
-    btn.className = 'emoji-btn';
-    btn.textContent = em;
-    btn.onclick = () => toggleEmoji(em, btn);
-    grid.appendChild(btn);
+// ── EMOJI ─────────────────────────────────────
+function buildEmojiGrid(){
+  var g=document.getElementById('emoji-grid');g.innerHTML='';
+  EMOJIS.forEach(em=>{
+    var b=document.createElement('button');b.className='emoji-btn';b.textContent=em;
+    b.onclick=()=>toggleEmoji(em,b);g.appendChild(b);
   });
 }
 
-function toggleEmoji(emoji, btn) {
-  var maxE = currentUser?.emoji_limit || 3;
-  var idx = selectedEmojis.indexOf(emoji);
-  if (idx > -1) {
-    selectedEmojis.splice(idx, 1);
-    btn.classList.remove('selected');
-  } else {
-    if (selectedEmojis.length >= maxE) {
-      toast('Maksimal ' + maxE + ' emoji untuk paket ' + (currentUser?.status||'free').toUpperCase() + '.', 'err');
-      return;
-    }
-    selectedEmojis.push(emoji);
-    btn.classList.add('selected');
+function toggleEmoji(em,btn){
+  var maxE=currentUser?.emoji_limit||3;
+  var idx=selEmojis.indexOf(em);
+  if(idx>-1){selEmojis.splice(idx,1);btn.classList.remove('selected');}
+  else{
+    if(selEmojis.length>=maxE){toast('Maks '+maxE+' emoji (paket '+(currentUser?.status||'free').toUpperCase()+')','err');return;}
+    selEmojis.push(em);btn.classList.add('selected');
   }
-  renderSelectedEmojis();
-  document.getElementById('rc-emoji-count').textContent = '(' + selectedEmojis.length + ' dipilih)';
+  renderSelEmojis();
+  document.getElementById('rc-emoji-count').textContent='('+selEmojis.length+' dipilih)';
 }
 
-function renderSelectedEmojis() {
-  var c = document.getElementById('selected-emojis');
-  c.innerHTML = '';
-  selectedEmojis.forEach(em => {
-    var chip = document.createElement('span');
-    chip.className = 'sel-emoji-chip';
-    chip.textContent = em;
-    chip.title = 'Klik untuk hapus';
-    chip.onclick = () => {
-      selectedEmojis = selectedEmojis.filter(e => e !== em);
-      document.querySelectorAll('.emoji-btn').forEach(b => { if (b.textContent === em) b.classList.remove('selected'); });
-      renderSelectedEmojis();
-      document.getElementById('rc-emoji-count').textContent = '(' + selectedEmojis.length + ' dipilih)';
+function renderSelEmojis(){
+  var c=document.getElementById('sel-emojis');c.innerHTML='';
+  selEmojis.forEach(em=>{
+    var ch=document.createElement('span');ch.className='sel-chip';ch.textContent=em;ch.title='Klik hapus';
+    ch.onclick=()=>{
+      selEmojis=selEmojis.filter(e=>e!==em);
+      document.querySelectorAll('.emoji-btn').forEach(b=>{if(b.textContent===em)b.classList.remove('selected');});
+      renderSelEmojis();document.getElementById('rc-emoji-count').textContent='('+selEmojis.length+' dipilih)';
     };
-    c.appendChild(chip);
+    c.appendChild(ch);
   });
 }
 
-// ─────────────────────────────────────────────
-// REACTION
-// ─────────────────────────────────────────────
-async function sendReaction() {
-  var link = document.getElementById('rc-link').value.trim();
-  var apikey = document.getElementById('rc-apikey').value.trim();
-
-  if (!link) { toast('Link saluran wajib diisi.', 'err'); return; }
-  if (!apikey) { toast('API Key belum ada. Buat di menu API Key.', 'err'); return; }
-  if (selectedEmojis.length === 0) { toast('Pilih minimal 1 emoji.', 'err'); return; }
-
-  var btn = document.getElementById('rc-btn');
-  btn.disabled = true; btn.textContent = '⏳ Mengirim...';
-
-  var r = await API.sendReaction(apikey, link, selectedEmojis);
-  btn.disabled = false; btn.textContent = '🚀 Kirim Reaction';
-
-  showResponse('rc-response', 'rc-res-placeholder', r.data, r.data?.success);
-  if (r.data?.success) {
-    toast('✅ Reaction berhasil dikirim!', 'ok');
-    currentUser.limit_used = (currentUser.limit_used || 0) + 1;
-    updateUserUI();
-    updatePanelLimits();
-  } else {
-    toast(r.data?.error || 'Gagal mengirim reaction.', 'err');
-  }
+// ── API CALLS ─────────────────────────────────
+async function doSendReaction(){
+  var link=document.getElementById('rc-link').value.trim();
+  var apikey=document.getElementById('rc-apikey').value.trim();
+  if(!link){toast('Link saluran wajib.','err');return;}
+  if(!apikey){toast('API Key belum ada. Buat di menu API Key.','err');return;}
+  if(!selEmojis.length){toast('Pilih minimal 1 emoji.','err');return;}
+  var btn=document.getElementById('rc-btn');btn.disabled=true;btn.textContent='⏳ Mengirim...';
+  var r=await API.sendReaction(apikey,link,selEmojis);
+  btn.disabled=false;btn.textContent='🚀 Kirim Reaction';
+  showRes('rc-response','rc-ph',r.data,r.data?.success);
+  if(r.data?.success){toast('✅ Reaction berhasil!','ok');if(currentUser)currentUser.limit_used++;updateUserUI();}
+  else toast(r.data?.error||'Gagal.','err');
 }
 
-// ─────────────────────────────────────────────
-// DOWNLOADER
-// ─────────────────────────────────────────────
-async function doDownload() {
-  var url = document.getElementById('dl-url').value.trim();
-  var apikey = document.getElementById('dl-apikey').value.trim();
-  if (!url) { toast('URL wajib diisi.', 'err'); return; }
-  if (!apikey) { toast('API Key belum ada. Buat di menu API Key.', 'err'); return; }
-
-  var r = await API.downloadMedia(apikey, url);
-  showResponse('dl-response', 'dl-res-placeholder', r.data, r.data?.success);
-  if (r.data?.success) {
-    toast('✅ Download berhasil diproses!', 'ok');
-    currentUser.limit_used = (currentUser.limit_used || 0) + 1;
-    updatePanelLimits();
-  } else {
-    toast(r.data?.error || 'Gagal.', 'err');
-  }
+async function doDownload(){
+  var url=document.getElementById('dl-url').value.trim();
+  var apikey=document.getElementById('dl-apikey').value.trim();
+  if(!url){toast('URL wajib.','err');return;}
+  if(!apikey){toast('API Key belum ada.','err');return;}
+  var r=await API.downloadMedia(apikey,url);
+  showRes('dl-response','dl-ph',r.data,r.data?.success);
+  if(r.data?.success){toast('✅ Berhasil!','ok');if(currentUser)currentUser.limit_used++;updateUserUI();}
+  else toast(r.data?.error||'Gagal.','err');
 }
 
-// ─────────────────────────────────────────────
-// HD
-// ─────────────────────────────────────────────
-async function doHD() {
-  var url = document.getElementById('hd-url').value.trim();
-  var apikey = document.getElementById('hd-apikey').value.trim();
-  if (!url) { toast('URL gambar wajib.', 'err'); return; }
-  if (!apikey) { toast('API Key belum ada. Buat di menu API Key.', 'err'); return; }
-
-  var r = await API.enhanceHD(apikey, url);
-  showResponse('hd-response', 'hd-res-placeholder', r.data, r.data?.success);
-  if (r.data?.success) {
-    toast('✅ Gambar HD berhasil diproses!', 'ok');
-    currentUser.limit_used = (currentUser.limit_used || 0) + 1;
-    updatePanelLimits();
-  } else {
-    toast(r.data?.error || 'Gagal.', 'err');
-  }
+async function doHD(){
+  var url=document.getElementById('hd-url').value.trim();
+  var apikey=document.getElementById('hd-apikey').value.trim();
+  if(!url){toast('URL gambar wajib.','err');return;}
+  if(!apikey){toast('API Key belum ada.','err');return;}
+  var r=await API.enhanceHD(apikey,url);
+  showRes('hd-response','hd-ph',r.data,r.data?.success);
+  if(r.data?.success){toast('✅ Berhasil!','ok');if(currentUser)currentUser.limit_used++;updateUserUI();}
+  else toast(r.data?.error||'Gagal.','err');
 }
 
-// ─────────────────────────────────────────────
-// API KEY
-// ─────────────────────────────────────────────
-async function loadApiKeys() {
-  var cont = document.getElementById('apikey-list');
-  var token = localStorage.getItem(TOKEN_KEY);
-  if (!token) return;
-
-  var r = await API.getUserInfo(token);
-  if (!r.data?.success) return;
-  currentUser = { ...currentUser, ...r.data.user };
-
-  var keys = r.data.user.apikeys || {};
-  var types = ['reaction', 'downloader', 'hd'];
-  var typeLabels = { reaction: '💬 Reaction', downloader: '⬇️ Downloader', hd: '🖼️ HD Image' };
-  var typeClasses = { reaction: 'reaction', downloader: 'downloader', hd: 'hd' };
-
-  var html = '';
-  types.forEach(t => {
-    var key = keys[t] || null;
-    html += '<div class="apikey-card">';
-    html += '<div class="apikey-top"><span class="apikey-type ' + typeClasses[t] + '">' + typeLabels[t] + '</span></div>';
-    if (key) {
-      html += '<div class="apikey-val" id="akval-'+t+'">' + escHtml(key) + '</div>';
-      html += '<div class="apikey-actions">';
-      html += '<button class="btn btn-sm btn-secondary copy-btn" onclick="copyKey(\'' + escHtml(key) + '\')">📋 Salin</button>';
-      html += '<button class="btn btn-sm btn-secondary" onclick="generateKey(\'' + t + '\')">🔄 Regenerate</button>';
-      html += '</div>';
-    } else {
-      html += '<div style="color:var(--t3);font-size:.78rem;margin-bottom:10px">API Key belum dibuat.</div>';
-      html += '<button class="btn btn-sm btn-primary" onclick="generateKey(\'' + t + '\')">➕ Buat API Key</button>';
+async function loadApiKeys(){
+  var tk=localStorage.getItem(TK);if(!tk)return;
+  var r=await API.getUserInfo(tk);if(!r.data?.success)return;
+  currentUser={...currentUser,...r.data.user};
+  var keys=r.data.user.apikeys||{};
+  var types=['reaction','downloader','hd'];
+  var labels={reaction:'💬 Reaction',downloader:'⬇️ Downloader',hd:'🖼️ HD Image'};
+  var html='';
+  types.forEach(t=>{
+    var k=keys[t]||null;
+    html+='<div class="apikey-card">';
+    html+='<span class="apikey-type '+t+'">'+labels[t]+'</span>';
+    if(k){
+      html+='<div class="apikey-val">'+esc(k)+'</div>';
+      html+='<div style="display:flex;gap:7px">';
+      html+='<button class="btn btn-sm btn-secondary" onclick="copyTxt(\''+esc(k)+'\')">📋 Salin</button>';
+      html+='<button class="btn btn-sm btn-secondary" onclick="genKey(\''+t+'\')">🔄 Regenerate</button>';
+      html+='</div>';
+    }else{
+      html+='<div style="color:var(--t3);font-size:.75rem;margin-bottom:8px">Belum ada API Key.</div>';
+      html+='<button class="btn btn-sm btn-primary" onclick="genKey(\''+t+'\')">➕ Buat API Key</button>';
     }
-    html += '</div>';
+    html+='</div>';
   });
-  cont.innerHTML = html;
-  updatePanelLimits();
+  document.getElementById('apikey-list').innerHTML=html;
+  updateUserUI();
 }
 
-async function generateKey(type) {
-  var token = localStorage.getItem(TOKEN_KEY);
-  if (!token) { toast('Silakan login ulang.', 'err'); return; }
-  var r = await API.generateApiKey(token, type);
-  if (r.data?.success) {
-    toast('✅ API Key ' + type + ' berhasil dibuat!', 'ok');
-    if (!currentUser.apikeys) currentUser.apikeys = {};
-    currentUser.apikeys[type] = r.data.apikey;
-    loadApiKeys();
-    updatePanelLimits();
-  } else {
-    toast(r.data?.error || 'Gagal generate key.', 'err');
-  }
+async function genKey(type){
+  var tk=localStorage.getItem(TK);if(!tk){toast('Login dulu.','err');return;}
+  var r=await API.generateApiKey(tk,type);
+  if(r.data?.success){
+    toast('✅ API Key '+type+' dibuat!','ok');
+    if(!currentUser.apikeys)currentUser.apikeys={};
+    currentUser.apikeys[type]=r.data.apikey;
+    loadApiKeys();updateUserUI();
+  }else toast(r.data?.error||'Gagal.','err');
 }
 
-function copyKey(key) {
-  navigator.clipboard.writeText(key).then(() => toast('📋 API Key disalin!', 'ok')).catch(() => toast('Gagal salin.', 'err'));
-}
+function copyTxt(t){navigator.clipboard.writeText(t).then(()=>toast('📋 Disalin!','ok')).catch(()=>toast('Gagal salin.','err'));}
 
-// ─────────────────────────────────────────────
-// BOT LIST
-// ─────────────────────────────────────────────
-window._botData = [];
-
-function renderBotList(bots) {
-  var el = document.getElementById('bot-list-main');
-  if (!bots || !bots.length) {
-    el.innerHTML = '<div style="color:var(--t3);font-size:.8rem;text-align:center;padding:24px">Belum ada bot terdaftar.</div>';
-    return;
-  }
-  var html = '<div>';
-  bots.forEach(b => {
-    var isOn = b.connected && b.active;
-    html += '<div class="bot-status-row">';
-    html += '<div style="display:flex;align-items:center">';
-    html += '<div class="bot-dot ' + (isOn ? 'on' : 'off') + '"></div>';
-    html += '<div class="bot-num">' + escHtml(b.number) + '</div>';
-    html += '</div>';
-    html += '<div class="bot-state">' + (isOn ? '🟢 Aktif' : b.connected ? '🟡 Terhubung' : '🔴 Offline') + '</div>';
-    html += '</div>';
+// ── BOT ───────────────────────────────────────
+function renderBotList(bots){
+  var el=document.getElementById('bot-list-main');
+  if(!bots||!bots.length){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--t3)">Belum ada bot terdaftar.</div>';return;}
+  var html='';
+  bots.forEach(b=>{
+    var on=b.connected&&b.active;
+    html+='<div class="bot-row"><div style="display:flex;align-items:center;gap:8px"><div class="bot-dot '+(on?'on':'off')+'"></div><span style="font-size:.78rem;font-weight:600;font-family:var(--mono)">'+esc(b.number)+'</span></div>';
+    html+='<span style="font-size:.68rem;color:var(--t3)">'+(on?'🟢 Aktif':b.connected?'🟡 Terhubung':'🔴 Offline')+'</span></div>';
   });
-  html += '</div>';
-  el.innerHTML = html;
+  el.innerHTML=html;
 }
 
-function renderHomeBotList(bots) {
-  var el = document.getElementById('home-bot-list');
-  var active = (bots || []).filter(b => b.connected && b.active);
-  if (!bots || !bots.length) {
-    el.innerHTML = '<div style="color:var(--t3);font-size:.8rem">Belum ada bot terdaftar oleh admin.</div>';
-    return;
-  }
-  var html = '<div style="display:flex;flex-wrap:wrap;gap:10px">';
-  bots.forEach(b => {
-    var isOn = b.connected && b.active;
-    html += '<div style="background:var(--bg3);border:1px solid '+(isOn?'rgba(16,185,129,.3)':'var(--border)')+';border-radius:8px;padding:8px 14px;display:flex;align-items:center;gap:8px">';
-    html += '<div class="bot-dot ' + (isOn ? 'on' : 'off') + '"></div>';
-    html += '<span style="font-size:.78rem;font-weight:600">' + escHtml(b.number) + '</span>';
-    html += '</div>';
+function renderHomeBots(bots){
+  var el=document.getElementById('h-bot-list');
+  if(!bots||!bots.length){el.innerHTML='<div style="color:var(--t3)">Belum ada bot dari admin.</div>';return;}
+  var html='<div style="display:flex;flex-wrap:wrap;gap:8px">';
+  bots.forEach(b=>{
+    var on=b.connected&&b.active;
+    html+='<div style="background:var(--bg3);border:1px solid '+(on?'rgba(16,185,129,.28)':'var(--border)')+';border-radius:8px;padding:7px 12px;display:flex;align-items:center;gap:7px">';
+    html+='<div class="bot-dot '+(on?'on':'off')+'"></div><span style="font-size:.75rem;font-weight:600;font-family:var(--mono)">'+esc(b.number)+'</span></div>';
   });
-  html += '</div>';
-  el.innerHTML = html;
-  document.getElementById('home-bots').textContent = active.length;
-  document.getElementById('bot-total').textContent = bots.length;
-  document.getElementById('bot-active').textContent = active.length;
+  html+='</div>';
+  el.innerHTML=html;
+  var act=(bots||[]).filter(b=>b.connected&&b.active);
+  document.getElementById('h-bots').textContent=act.length;
+  document.getElementById('bot-total').textContent=bots.length;
+  document.getElementById('bot-active').textContent=act.length;
 }
 
-// ─────────────────────────────────────────────
-// SOCKET
-// ─────────────────────────────────────────────
-function connectSocket() {
-  try {
-    var s = document.createElement('script');
-    s.src = '/socket.io/socket.io.js';
-    s.onload = initSocket;
-    s.onerror = () => {};
-    document.head.appendChild(s);
-  } catch(e) {}
+// ── SOCKET ────────────────────────────────────
+function connectSocket(){
+  var s=document.createElement('script');
+  s.src='/socket.io/socket.io.js';s.onload=initSocket;s.onerror=()=>{};
+  document.head.appendChild(s);
 }
 
-function initSocket() {
-  try {
-    socket = io();
-    socket.on('stats:update', d => {
-      if (d?.bots) {
-        document.getElementById('home-bots').textContent = d.bots.active;
-        document.getElementById('bot-total').textContent = d.bots.total;
-        document.getElementById('bot-active').textContent = d.bots.active;
-        document.getElementById('bot-requests').textContent = d.requests?.reaction || 0;
-      }
+function initSocket(){
+  try{
+    socket=io();
+    socket.on('stats:update',d=>{
+      if(d?.bots){document.getElementById('h-bots').textContent=d.bots.active;document.getElementById('bot-total').textContent=d.bots.total;document.getElementById('bot-active').textContent=d.bots.active;document.getElementById('bot-req').textContent=d.requests?.reaction||0;}
     });
-    socket.on('bot:list', bots => {
-      window._botData = bots || [];
-      renderBotList(bots);
-      renderHomeBotList(bots);
+    socket.on('bot:list',bots=>{_botData=bots||[];renderBotList(bots);renderHomeBots(bots);});
+    socket.on('bot:connected',d=>{toast('🤖 Bot '+d.number+' terhubung!','ok');_botData=_botData.filter(b=>b.number!==d.number);_botData.push({number:d.number,connected:true,active:true});renderBotList(_botData);renderHomeBots(_botData);});
+    socket.on('bot:disconnected',d=>{toast('⚠️ Bot '+d.number+' terputus.','info');_botData=_botData.filter(b=>b.number!==d.number);renderBotList(_botData);renderHomeBots(_botData);});
+    socket.on('bot:status',d=>{_botData=_botData.map(b=>b.number===d.number?{...b,...d}:b);renderBotList(_botData);renderHomeBots(_botData);});
+    socket.on('system:maintenance',d=>{
+      if(d?.enabled){document.getElementById('maint-txt').textContent=d.message||'Maintenance.';document.getElementById('maintenance-screen').classList.remove('hidden');}
+      else document.getElementById('maintenance-screen').classList.add('hidden');
     });
-    socket.on('bot:connected', d => {
-      toast('🤖 Bot ' + d.number + ' terhubung!', 'ok');
-      window._botData = (window._botData || []).map(b => b.number === d.number ? {...b, connected: true} : b);
-      if (!window._botData.find(b => b.number === d.number)) window._botData.push({ number: d.number, connected: true, active: true });
-      renderBotList(window._botData);
-      renderHomeBotList(window._botData);
-    });
-    socket.on('bot:disconnected', d => {
-      toast('🤖 Bot ' + d.number + ' terputus.', 'info');
-      window._botData = (window._botData || []).filter(b => b.number !== d.number);
-      renderBotList(window._botData);
-      renderHomeBotList(window._botData);
-    });
-    socket.on('bot:status', d => {
-      window._botData = (window._botData || []).map(b => b.number === d.number ? {...b, ...d} : b);
-      renderBotList(window._botData);
-      renderHomeBotList(window._botData);
-    });
-    socket.on('system:maintenance', d => {
-      if (d?.enabled) {
-        document.getElementById('maint-msg-text').textContent = d.message || 'Server maintenance.';
-        document.getElementById('maintenance-screen').classList.remove('hidden');
-      } else {
-        document.getElementById('maintenance-screen').classList.add('hidden');
-      }
-    });
-    socket.on('force:banned', () => {
-      toast('Akun Anda dibanned oleh admin.', 'err');
-      setTimeout(doLogout, 2000);
-    });
-    socket.on('user:status_changed', d => {
-      if (currentUser && d.phone === currentUser.phone) {
-        currentUser.status = d.status;
-        updateUserUI();
-        updatePanelLimits();
-        toast('Status akun diubah ke ' + d.status.toUpperCase() + '.', 'info');
-      }
-    });
-    socket.on('settings:updated', s => {
-      // Update local limits if needed
-    });
-  } catch(e) {}
+    socket.on('force:banned',()=>{toast('Akun Anda dibanned.','err');setTimeout(doLogout,1800);});
+    socket.on('user:status_changed',d=>{if(currentUser&&d.phone===currentUser.phone){currentUser.status=d.status;updateUserUI();toast('Status akun diubah ke '+d.status.toUpperCase()+'.','info');}});
+  }catch(e){}
 }
 
-// ─────────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────────
-function showResponse(resId, placeholderId, data, ok) {
-  var res = document.getElementById(resId);
-  var ph = document.getElementById(placeholderId);
-  if (ph) ph.style.display = 'none';
-  res.className = 'res-box show';
-  res.innerHTML = '<span class="' + (ok ? 'res-ok' : 'res-err') + '">' + JSON.stringify(data, null, 2).replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>';
+// ── HELPERS ───────────────────────────────────
+function showRes(resId,phId,data,ok){
+  var r=document.getElementById(resId);var p=document.getElementById(phId);
+  if(p)p.style.display='none';r.className='res-box show';
+  r.innerHTML='<span style="color:'+(ok?'var(--green)':'var(--red)')+'">'+JSON.stringify(data,null,2).replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</span>';
 }
 
-function toast(msg, type) {
-  var c = document.getElementById('toast-container');
-  var t = document.createElement('div');
-  t.className = 'toast ' + (type || 'info');
-  t.innerHTML = escHtml(msg);
-  c.appendChild(t);
-  setTimeout(() => { t.style.opacity='0'; setTimeout(() => t.remove(), 400); }, 3500);
+function showErr(id,msg){var el=document.getElementById(id);el.textContent=msg;el.classList.add('show');var btn=document.getElementById(id.replace('-err','-btn'));if(btn){btn.disabled=false;btn.textContent=id.includes('login')?'🔐 Masuk':'✨ Buat Akun';}}
+
+function toast(msg,type){
+  var c=document.getElementById('toast-container');
+  var t=document.createElement('div');t.className='toast '+(type||'info');t.textContent=msg;
+  c.appendChild(t);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),350);},3200);
 }
 
-function escHtml(s) {
-  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
-}
+function shakeEl(el){el.style.animation='shake .4s ease';setTimeout(()=>el.style.animation='',400);}
 
-// ─────────────────────────────────────────────
-// BOOT
-// ─────────────────────────────────────────────
-window.addEventListener('load', bootApp);
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
 
-// Shake animation
-var style = document.createElement('style');
-style.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-5px)}20%,40%,60%,80%{transform:translateX(5px)}}';
-document.head.appendChild(style);
+// Enter key listeners
+document.addEventListener('DOMContentLoaded',()=>{
+  ['login-phone','login-pass'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();}));
+  ['reg-phone','reg-pass','reg-pass2'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();}));
+});
+
+window.addEventListener('load',boot);
 </script>
 </body>
 </html>

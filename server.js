@@ -22,7 +22,7 @@ const io = new Server(server, {
 });
 
 const PORT = process.env.PORT || 3000;
-const ADMIN_KEY = process.env.ADMIN_KEY || 'ADMIN_SECRET_2025';
+const ADMIN_KEY = process.env.ADMIN_KEY || 'Asiafone11';
 const DB_FILE = path.join(__dirname, 'db.json');
 const SESSIONS_DIR = path.join(__dirname, 'sessions');
 
@@ -130,6 +130,43 @@ function getUser(phone) {
 // ============================================================
 // AUTH ROUTES
 // ============================================================
+// ── REGISTER ──────────────────────────────────────────────
+app.post('/api/auth/register', (req, res) => {
+  const ip = req.ip || req.connection.remoteAddress;
+  if (!rateLimit('register:'+ip, 5, 60000)) {
+    return res.status(429).json({ success: false, error: 'Terlalu banyak percobaan. Tunggu 1 menit.' });
+  }
+
+  const { phone, password } = req.body;
+  if (!phone || !password) return res.status(400).json({ success: false, error: 'Nomor dan password wajib diisi.' });
+
+  const cleanPhone = sanitize(String(phone)).replace(/\D/g, '');
+  if (!cleanPhone || cleanPhone.length < 8) return res.status(400).json({ success: false, error: 'Nomor WA tidak valid. Gunakan format 628xxx.' });
+  if (password.length < 6) return res.status(400).json({ success: false, error: 'Password minimal 6 karakter.' });
+
+  if (DB.users[cleanPhone]) {
+    return res.status(409).json({ success: false, error: 'Nomor sudah terdaftar. Silakan masuk.' });
+  }
+
+  const hashedPw = crypto.createHash('sha256').update(password + cleanPhone).digest('hex');
+  const user = {
+    id: genId('u'),
+    phone: cleanPhone,
+    password_hash: hashedPw,
+    status: 'free',
+    banned: false,
+    limit_used: 0,
+    limit_reset: Date.now() + 86400000,
+    created_at: Date.now(),
+    apikeys: {}
+  };
+  DB.users[cleanPhone] = user;
+  saveDB(DB);
+
+  res.json({ success: true, message: 'Akun berhasil dibuat! Silakan masuk.' });
+});
+
+// ── LOGIN ─────────────────────────────────────────────────
 app.post('/api/auth/login', (req, res) => {
   const ip = req.ip || req.connection.remoteAddress;
   if (!rateLimit('login:'+ip, 5, 60000)) {
@@ -142,25 +179,19 @@ app.post('/api/auth/login', (req, res) => {
   const cleanPhone = sanitize(String(phone)).replace(/\D/g, '');
   if (!cleanPhone || cleanPhone.length < 6) return res.status(400).json({ success: false, error: 'Nomor tidak valid.' });
 
-  if (password !== '043011') return res.status(401).json({ success: false, error: 'Password salah.' });
+  const user = DB.users[cleanPhone];
+  if (!user) return res.status(404).json({ success: false, error: 'Akun tidak ditemukan. Silakan daftar terlebih dahulu.' });
+  if (user.banned) return res.status(403).json({ success: false, error: 'Akun Anda dibanned. Hubungi admin.' });
 
-  let user = DB.users[cleanPhone];
-  if (!user) {
-    user = {
-      id: genId('u'),
-      phone: cleanPhone,
-      status: 'free',
-      banned: false,
-      limit_used: 0,
-      limit_reset: Date.now() + 86400000,
-      created_at: Date.now(),
-      apikeys: {}
-    };
-    DB.users[cleanPhone] = user;
-    saveDB(DB);
+  // Verifikasi password — support hash baru & akun lama tanpa hash
+  const hashedPw = crypto.createHash('sha256').update(password + cleanPhone).digest('hex');
+  if (user.password_hash && user.password_hash !== hashedPw) {
+    return res.status(401).json({ success: false, error: 'Password salah.' });
   }
-
-  if (user.banned) return res.status(403).json({ success: false, error: 'Akun Anda dibanned.' });
+  // Kalau akun lama belum punya password_hash, simpan hash-nya sekarang
+  if (!user.password_hash) {
+    user.password_hash = hashedPw;
+  }
 
   const token = genId('tok');
   user.token = token;

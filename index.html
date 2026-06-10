@@ -126,11 +126,11 @@ input::placeholder{color:var(--t3)}
 .logout-btn{width:100%;padding:8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);border-radius:8px;color:#fca5a5;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font)}
 .logout-btn:hover{background:rgba(239,68,68,.18)}
 
-.topbar{display:none;position:fixed;top:0;left:0;right:0;height:54px;background:rgba(7,7,14,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:150;align-items:center;padding:0 16px;gap:12px}
-.menu-btn{background:transparent;border:1px solid var(--border2);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t1)}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:190;opacity:0;pointer-events:none;transition:opacity .3s}
+.topbar{display:none;position:fixed;top:0;left:0;right:0;height:54px;background:rgba(7,7,14,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:300;align-items:center;padding:0 16px;gap:12px}
+.menu-btn{background:transparent;border:1px solid var(--border2);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t1);flex-shrink:0}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:250;opacity:0;pointer-events:none;transition:opacity .3s}
 .overlay.show{opacity:1;pointer-events:all}
-.main{margin-left:256px;flex:1;padding:32px;min-height:100vh}
+.main{margin-left:256px;flex:1;padding:32px;min-height:100vh;overflow-x:hidden}
 .panel{display:none;animation:fadeUp .2s ease}
 .panel.active{display:block}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -187,13 +187,17 @@ input::placeholder{color:var(--t3)}
 .toast.info{background:rgba(59,130,246,.14);border:1px solid rgba(59,130,246,.28);color:#93c5fd}
 
 @media(max-width:900px){
-  .sidebar{transform:translateX(-100%)}
+  .sidebar{transform:translateX(-100%);z-index:400}
   .sidebar.open{transform:translateX(0)}
   .topbar{display:flex}
-  .main{margin-left:0;padding:70px 16px 24px}
+  .main{margin-left:0;padding:66px 14px 32px;overflow-x:hidden}
   .g3,.g4{grid-template-columns:1fr 1fr}
+  .g2{grid-template-columns:1fr}
 }
-@media(max-width:580px){.g2,.g3,.g4{grid-template-columns:1fr}}
+@media(max-width:580px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .main{padding:62px 12px 28px}
+}
 </style>
 </head>
 <body>
